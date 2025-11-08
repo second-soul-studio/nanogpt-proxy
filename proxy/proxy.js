@@ -1,5 +1,4 @@
 import express from 'express';
-import fetch from 'node-fetch';
 import helmet from 'helmet';
 import sqlite from 'better-sqlite3';
 import crypto from 'crypto';

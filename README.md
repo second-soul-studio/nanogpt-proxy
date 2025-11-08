@@ -53,15 +53,21 @@ docker compose up -d --build
 
 4. Add a user + API key
 
+```
 docker compose exec proxy node init-db.js add-user alice@example.com sk-abc123...
+```
 
 List all users:
 
+```
 docker compose exec proxy node init-db.js list
+```
 
 Delete a user:
 
+```
 docker compose exec proxy node init-db.js del-user alice@example.com
+```
 
 🔌 OpenWebUI Setup
 
@@ -78,11 +84,15 @@ ENABLE_FORWARD_USER_INFO_HEADERS=true
 👨‍💻 Development
 Rebuild after code changes:
 
+```
 docker compose up -d --build
+```
 
 View proxy logs:
 
+```
 docker compose logs -f proxy
+```
 
 🔐 Security Notes
 

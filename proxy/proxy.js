@@ -11,7 +11,9 @@ const app = express();
 const DB_PATH = './keys.db';
 const db = sqlite(DB_PATH);
 const key = process.env.DB_ENCRYPTION_KEY;
-const API_BASE = 'https://nano-gpt.com/api/v1';
+const API_BASE = 'https://nano-gpt.com/api';
+const SUBSCRIPTION_API_BASE = API_BASE + '/subscription/v1';
+const REGULAR_API_BASE = API_BASE + '/v1';
 
 if (!key) throw new Error('Missing DB_ENCRYPTION_KEY in environment');
 
@@ -36,9 +38,9 @@ app.all('/v1/*', async (req, res) => {
         console.log('[PASS] /v1/models');
 
         try {
-            const response = await axios.get(`${API_BASE}/models`, {
+            const response = await axios.get(`${SUBSCRIPTION_API_BASE}/models`, {
                 headers: { 'Content-Type': 'application/json' },
-                timeout: 10000,
+                timeout: 60000,
             });
             return res.json(response.data);
         } catch (err) {
@@ -61,7 +63,7 @@ app.all('/v1/*', async (req, res) => {
     const userKey = decrypt(row.api_key);
 
     const upstream = await axios({
-        url: `${API_BASE}${req.path}`,
+        url: `${REGULAR_API_BASE}${req.path}`,
         method: req.method,
         headers: {
             'Content-Type': 'application/json',
@@ -69,7 +71,7 @@ app.all('/v1/*', async (req, res) => {
         },
         data: req.method !== 'GET' ? req.body : undefined,
         responseType: 'stream',
-        timeout: 120000,
+        timeout: 180000,
     });
 
     // Stream the response through

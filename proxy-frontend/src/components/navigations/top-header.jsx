@@ -1,14 +1,11 @@
-import { Box, Group } from '@mantine/core';
+import { Group, Title } from '@mantine/core';
+import classes from './top-header.module.css';
 
 function TopHeader() {
   return (
-    <Box pb={120}>
-      <header>
-        <Group justify="space-between" h="100%">
-          NanoGPT Proxy
-        </Group>
-      </header>
-    </Box>
+    <Group h="100%" px="md" justify="space-between" className={classes.header}>
+      <Title order={4}>NanoGPT Proxy</Title>
+    </Group>
   );
 }
 

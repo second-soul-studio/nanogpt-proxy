@@ -18,6 +18,7 @@ export default defineConfig({
         '**/tests/**',
         '__mocks__/**',
         '**/*config*.js',
+        '**/**/*.css',
       ],
     },
   },

@@ -1,6 +1,25 @@
 version: '3.9'
 
 services:
+  proxy-frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173"
+    build: ./proxy-frontend
+    container_name: nanogpt-proxy-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend-mvp:/app:cached
+      - frontend_node_modules:/app/node_modules  # node_modules séparé (Linux)
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:3000}
+    depends_on:
+      - proxy
+    networks:
+      - app-net
+
   proxy:
     build: ./proxy
     container_name: nanogpt-proxy
@@ -21,5 +40,3 @@ services:
     command: tail -f /dev/null
     volumes:
       - ./proxy/keys.db:/data/keys.db
-    
-

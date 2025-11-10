@@ -1,5 +1,5 @@
 # Use lightweight Node image
-FROM node:18-bullseye AS base
+FROM node:20-bullseye AS base
 
 # Create app directory
 WORKDIR /app

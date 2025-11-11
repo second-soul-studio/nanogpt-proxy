@@ -33,7 +33,6 @@ OpenWebUI forwards user email via `X-OpenWebUI-User-Email`, and the proxy maps t
 ## 📦 Quick Start
 
 🛑 Warning: This project uses `better-sqlite3`, which relies on native modules.
-
 💡 To avoid installation issues on Windows:
 
 Use Node.js 20.x via [nvm](proxy-frontend/README.md)
@@ -114,13 +113,10 @@ docker compose logs -f proxy
 
 🎯 Roadmap
 
-Optional JWT-based auth to block unknown users
-
-Web-based admin UI for managing users
-
-Docker health checks
-
-    Built-in rate limiting per user
+- Optional JWT-based auth to block unknown users
+- Web-based admin UI for managing users (In Progress - Patrick Bélanger 🧑‍💻)
+- Docker health checks
+  - Built-in rate limiting per user
 
 📄 License
 

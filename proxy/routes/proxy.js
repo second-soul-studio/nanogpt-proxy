@@ -23,8 +23,9 @@ export default function registerProxyRoutes(app) {
             return res.status(400).json({ error: '⚠️ Missing user email header' });
         }
 
+        let row;
         try {
-            const row = db.prepare('SELECT api_key FROM users WHERE email = ?').get(userEmail);
+            row = db.prepare('SELECT api_key FROM users WHERE email = ?').get(userEmail);
             if (!row) {
                 return res.status(401).json({ error: '⚠️ User not found in DB' });
             }

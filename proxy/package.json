@@ -7,8 +7,7 @@
         "start": "node app.js",
         "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
         "test:windows": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-        "test:windows:file": "cross-env NODE_OPTIONS=--experimental-vm-modules jest crypo.test.js",
-        "test:windows:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest coverage"
+        "test:windows:file": "cross-env NODE_OPTIONS=--experimental-vm-modules jest crypo.test.js"
     },
     "dependencies": {
         "axios": "^1.7.0",

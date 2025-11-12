@@ -7,9 +7,10 @@
         "start": "node app.js",
         "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
         "test:windows": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-        "test:windows:file": "cross-env NODE_OPTIONS=--experimental-vm-modules jest crypo.test.js"
+        "test:windows:file": "cross-env NODE_OPTIONS=--experimental-vm-modules jest nanogpt-api-client.test.js"
     },
     "dependencies": {
+        "@jest/globals": "^30.2.0",
         "axios": "^1.7.0",
         "better-sqlite3": "^9.0.0",
         "dotenv": "^16.3.1",

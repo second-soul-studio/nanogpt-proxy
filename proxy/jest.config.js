@@ -1,7 +1,7 @@
 export default {
   collectCoverage: true,
   coverageDirectory: "coverage",
-  coverageReporters: ["jest-junit", "json-summary", "text", "lcov"],
+  coverageReporters: ["json-summary", "text", "lcov"],
   testEnvironment: 'node',
   testMatch: [
     "**/__tests__/**/*.[jt]s?(x)",

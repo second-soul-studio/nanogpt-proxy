@@ -45,5 +45,5 @@ jobs:
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: proxy-frontend
+          working-directory: proxy
           coverage-file: /coverage/lcov.info

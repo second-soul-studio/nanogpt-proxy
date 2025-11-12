@@ -37,11 +37,11 @@ jobs:
       - name: Upload Coverage Report (Artifact)
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-frontend
+          name: coverage-report-backend
           path: proxy/coverage
 
       - name: Coverage Summary in PR
         uses: artiomtr/jest-coverage-report-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          working-directory: proxy-frontend
+          working-directory: proxy

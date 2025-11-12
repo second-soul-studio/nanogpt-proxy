@@ -6,6 +6,7 @@
     "scripts": {
         "start": "node app.js",
         "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+        "test:file": "cross-env NODE_OPTIONS=--experimental-vm-modules jest crypo.test.js",
         "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest coverage"
     },
     "dependencies": {

@@ -34,6 +34,7 @@ export default function registerProxyRoutes(app) {
         }
 
         const apiKey = decrypt(row.api_key);
+        console.log('[🧪] Decrypted apiKey:', JSON.stringify(apiKey));
         const nanoGptApiClient = new NanoGptApiClient(apiKey);
         const result = await nanoGptApiClient.proxyRequest(req);
 

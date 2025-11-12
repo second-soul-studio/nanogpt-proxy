@@ -1,0 +1,29 @@
+{
+  "id": "chatcmpl-1762917873969ymf4w",
+  "object": "chat.completion",
+  "created": 1762917873,
+  "model": "zai-org/GLM-4.6",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "\nHello! 😊 Yes, I'm here and ready to help—just like Lionel Richie’s classic tune! What’s on your mind today?"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 19,
+    "completion_tokens": 31,
+    "total_tokens": 50
+  },
+  "x_nanogpt_pricing": {
+    "cost": 0,
+    "inputTokens": 19,
+    "outputTokens": 31,
+    "paymentSource": "USD"
+  },
+  "cost": 0,
+  "paymentSource": null
+}

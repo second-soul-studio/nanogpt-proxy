@@ -32,7 +32,7 @@ jobs:
         working-directory: proxy
 
       - name: Run tests with coverage
-        run: npm run test:coverage
+        run: npm run test
 
       - name: Upload Coverage Report (Artifact)
         uses: actions/upload-artifact@v4

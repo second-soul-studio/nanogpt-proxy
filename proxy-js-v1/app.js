@@ -9,7 +9,7 @@ const app = express();
 app.use(helmet());
 app.use(express.json({ limit: '5mb' }));
 
-console.log(`ℹ️ NanoGPT-Proxy - Version 1.0.0`);
+console.log(`ℹ️ NanoGPT-Proxy (JS - MVP edition) - Version 1.0.0`);
 console.log(`©️ Copyright © 2025 symphonic-navigator, and other contributors. All rights reserved.`);
 console.log(`⚖️ MIT Licensed under the MIT License, Version 2.0\n`);
 

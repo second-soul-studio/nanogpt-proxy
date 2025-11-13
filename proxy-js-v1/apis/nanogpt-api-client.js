@@ -1,12 +1,23 @@
 import axios from 'axios';
 
-const API_BASE = 'https://nano-gpt.com/api/v1';
+const ROOT = new URL('https://nano-gpt.com/api/');
+
+const API = Object.freeze({
+    ROOT,
+    REGULAR: new URL('v1/', ROOT),
+    SUBSCRIPTION: new URL('subscription/v1/', ROOT),
+});
+
+const TIMEOUT = Object.freeze({
+    WITHOUT_APIKEY: 60000,
+    WITH_APIKEY: 180000,
+})
 
 export class NanoGptApiClient {
     constructor(apiKey = null) {
         this.client = axios.create({
-            baseURL: API_BASE,
-            timeout: 10000,
+            baseURL: API.REGULAR.href,
+            timeout: apiKey == null ? TIMEOUT.WITHOUT_APIKEY : TIMEOUT.WITH_APIKEY,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
@@ -15,7 +26,7 @@ export class NanoGptApiClient {
     }
 
     async getModels() {
-        return this.safe(() => this.client.get('/models'));
+        return this.safe(() => this.client.get(`${API.SUBSCRIPTION.href}/models`));
     }
 
     async proxyRequest(req) {

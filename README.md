@@ -33,7 +33,6 @@ OpenWebUI forwards user email via `X-OpenWebUI-User-Email`, and the proxy maps t
 ## 📦 Quick Start
 
 🛑 Warning: This project uses `better-sqlite3`, which relies on native modules.
-
 💡 To avoid installation issues on Windows:
 
 Use Node.js 20.x via [nvm](proxy-frontend/README.md)
@@ -42,7 +41,7 @@ Do not use Node.js 22 until official prebuilt binaries are available for this mo
 
 ### 1. Clone this repo
 
-```
+```bash
 sh
 git clone https://github.com/<your-user>/nanogpt-proxy
 cd nanogpt-proxy
@@ -57,23 +56,25 @@ DB_ENCRYPTION_KEY=CHANGE_THIS_TO_A_RANDOM_32_BYTE_VALUE
 
 3. Launch stack
 
+```bash
 docker compose up -d --build
+```
 
 4. Add a user + API key
 
-```
+```bash
 docker compose exec proxy node init-db.js add-user alice@example.com sk-abc123...
 ```
 
 List all users:
 
-```
+```bash
 docker compose exec proxy node init-db.js list
 ```
 
 Delete a user:
 
-```
+```bash
 docker compose exec proxy node init-db.js del-user alice@example.com
 ```
 
@@ -114,13 +115,10 @@ docker compose logs -f proxy
 
 🎯 Roadmap
 
-Optional JWT-based auth to block unknown users
-
-Web-based admin UI for managing users
-
-Docker health checks
-
-    Built-in rate limiting per user
+- Optional JWT-based auth to block unknown users
+- Web-based admin UI for managing users (In Progress - Patrick Bélanger 🧑‍💻)
+- Docker health checks
+  - Built-in rate limiting per user
 
 📄 License
 

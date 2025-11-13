@@ -1,22 +1,13 @@
 #!/usr/bin/env node
 import sqlite from 'better-sqlite3';
-import crypto from 'crypto';
 import dotenv from 'dotenv';
+import { encrypt } from './utilities/crypto.js';
 
 dotenv.config();
 
 const db = sqlite('keys.db');
 const key = process.env.DB_ENCRYPTION_KEY;
 if (!key) throw new Error('Missing DB_ENCRYPTION_KEY in env');
-
-const encrypt = (text) =>
-    crypto
-        .createCipheriv(
-            'aes-256-ctr',
-            crypto.createHash('sha256').update(key).digest(),
-            Buffer.alloc(16, 0),
-        )
-        .update(text, 'utf8', 'hex');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (

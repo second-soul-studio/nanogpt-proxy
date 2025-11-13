@@ -1,0 +1,26 @@
+{
+    "name": "nanogpt-proxy",
+    "version": "1.0.0",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+        "start": "node app.js",
+        "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+        "test:windows": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+        "test:windows:file": "cross-env NODE_OPTIONS=--experimental-vm-modules jest nanogpt-api-client.test.js"
+    },
+    "dependencies": {
+        "@jest/globals": "^30.2.0",
+        "axios": "^1.7.0",
+        "better-sqlite3": "^9.0.0",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "helmet": "^7.0.0",
+        "node-fetch": "^3.3.2"
+    },
+    "devDependencies": {
+        "cross-env": "^10.1.0",
+        "jest": "^30.2.0",
+        "supertest": "^7.1.4"
+    }
+}

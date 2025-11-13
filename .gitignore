@@ -140,3 +140,4 @@ vite.config.ts.timestamp-*
 
 # IntelliJ IDEA
 .idea
+/proxy-js-v1/queries/http-client.private.env.json

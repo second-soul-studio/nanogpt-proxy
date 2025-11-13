@@ -21,7 +21,7 @@ services:
       - app-net
 
   proxy:
-    build: ./proxy
+    build: proxy-js-v1
     container_name: nanogpt-proxy
     restart: unless-stopped
     ports:

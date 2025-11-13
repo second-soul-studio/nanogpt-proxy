@@ -25,8 +25,8 @@ describe('nanogpt-api-client.js', () => {
 
     expect(axios.create).toHaveBeenCalledTimes(1);
     const cfg = axios.create.mock.calls[0][0];
-    expect(cfg.baseURL).toBe('https://nano-gpt.com/api/v1');
-    expect(cfg.timeout).toBe(60000);
+    expect(cfg.baseURL).toBe('https://nano-gpt.com/api/v1/');
+    expect(cfg.timeout).toBe(180000);
     expect(cfg.headers['Content-Type']).toBe('application/json');
     expect(cfg.headers['Authorization']).toBe(`Bearer ${apiKey}`);
   });
@@ -40,7 +40,7 @@ describe('nanogpt-api-client.js', () => {
     const client = new NanoGptApiClient(apiKey);
     const res = await client.getModels();
 
-    expect(instance.get).toHaveBeenCalledWith('/models');
+    expect(instance.get).toHaveBeenCalledWith('https://nano-gpt.com/api/subscription/v1/models');
     expect(res.success).toBe(true);
     expect(res.data).toEqual(modelsMock);
     expect(res.headers).toEqual({ 'x-test': 'ok' });

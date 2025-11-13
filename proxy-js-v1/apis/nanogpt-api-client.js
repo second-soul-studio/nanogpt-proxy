@@ -26,7 +26,7 @@ export class NanoGptApiClient {
     }
 
     async getModels() {
-        return this.safe(() => this.client.get(`${API.SUBSCRIPTION.href}/models`));
+        return this.safe(() => this.client.get(`${API.SUBSCRIPTION.href}models`));
     }
 
     async proxyRequest(req) {

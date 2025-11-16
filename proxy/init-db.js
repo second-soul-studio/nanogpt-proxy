@@ -18,6 +18,15 @@ const encrypt = (text) =>
         )
         .update(text, 'utf8', 'hex');
 
+const decrypt = (enc) =>
+    crypto
+        .createDecipheriv(
+            'aes-256-ctr',
+            crypto.createHash('sha256').update(key).digest(),
+            Buffer.alloc(16, 0),
+        )
+        .update(enc, 'hex', 'utf8');
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     email TEXT PRIMARY KEY,
@@ -37,7 +46,10 @@ if (cmd === 'add-user') {
     db.prepare('INSERT OR REPLACE INTO users VALUES (?, ?)').run(email, encrypt(apiKey));
     console.log(`✅ Added/Updated user: ${email}`);
 } else if (cmd === 'list') {
-    console.log(db.prepare('SELECT email FROM users').all());
+    const users = db.prepare('SELECT email, api_key FROM users').all();
+    users.forEach(user => {
+        console.log({ email: user.email, api_key: decrypt(user.api_key) });
+    });
 } else if (cmd === 'del-user') {
     db.prepare('DELETE FROM users WHERE email = ?').run(email);
     console.log(`🗑️ Deleted: ${email}`);

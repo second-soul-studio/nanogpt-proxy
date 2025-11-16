@@ -37,16 +37,9 @@ export class Cryptor {
         const tag = Buffer.from(tagHex, 'hex');
         const ct = Buffer.from(ctHex, 'hex');
 
-        const key = crypto.scryptSync(this.#key, salt, 32);
-        const decipher = crypto.createDecipheriv(this.#alg, key, iv);
+        const decipher = crypto.createDecipheriv(this.#alg, this.#key, iv);
         decipher.setAuthTag(tag);
         const pt = Buffer.concat([decipher.update(ct), decipher.final()]);
         return pt.toString('utf8');
-    }
-
-    rotate(cipherBlob, keyNew) {
-        const plain = this.decrypt(cipherBlob);
-        const fresh = new Cryptor(keyNew, { alg: this.#alg });
-        return fresh.encrypt(plain);
     }
 }

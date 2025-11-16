@@ -33,12 +33,12 @@ if (cmd === 'import') {
     }
 
     let data;
-    try { 
-        data = JSON.parse(raw); 
+    try {
+        data = JSON.parse(raw);
     }
-    catch { 
-        console.error('invalid JSON in stdin'); 
-        process.exit(1); 
+    catch {
+        console.error('invalid JSON in stdin');
+        process.exit(1);
     }
 
     const insert = db.prepare('INSERT OR REPLACE INTO users VALUES (?, ?)');
@@ -58,9 +58,8 @@ if (cmd === 'import') {
     console.log(`✅ Added/Updated user: ${email}`);
 } else if (cmd === 'list') {
     const users = db.prepare('SELECT email, api_key FROM users').all();
-    users.forEach(user => {
-        console.log(JSON.stringify({ email: user.email, api_key: decrypt(user.api_key) }));
-    });
+    console.log(JSON.stringify(users.map(u => 
+        ({ email: u.email, api_key: decrypt(u.api_key) }))));
 } else if (cmd === 'del-user') {
     db.prepare('DELETE FROM users WHERE email = ?').run(email);
     console.log(`🗑️ Deleted: ${email}`);

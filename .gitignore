@@ -139,3 +139,14 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Jetbrain IDEs
+.idea
+
+# PNPM
+node_modules
+**/node_modules
+
+# Turbo
+.turbo
+**/.turbo

@@ -1,8 +1,8 @@
-### 🧰 Installing Node.js 22.x with NVM
+# 🧰 Installing Node.js 20.19.0 with NVM
 
 We strongly recommend using NVM (Node Version Manager) to manage Node.js versions across different environments.
 
-On Linux / macOS:
+## On Linux / macOS:
 
 Install NVM:
 
@@ -28,19 +28,19 @@ List available Node.js versions:
 nvm list-remote
 ```
 
-Install Node.js 22.x (latest LTS version in the 22.x line):
+Install Node.js 20.19.0 (latest LTS version in the 22.x line):
 
 ```bash
-nvm install 22
+nvm install 20.19.0
 ```
 
-Use Node.js 22.x in the project:
+Use Node.js 20.x in the project:
 
 ```bash
-nvm use 22
+nvm use 20
 ```
 
-On Windows (nvm-windows):
+## On Windows (nvm-windows):
 
 1. Download and install nvm-windows from https://github.com/coreybutler/nvm-windows/releases.
 2. After installation, open a new Command Prompt or PowerShell.
@@ -57,7 +57,7 @@ List available Node.js versions:
 nvm list available
 ```
 
-Install Node.js 22.x:
+Install Node.js 20.x:
 
 ```bash
 nvm install 20.19.0
@@ -75,4 +75,4 @@ nvm use 20.19.0
 node -v
 ```
 
-Should output: v20.x.x
+Should output: v20.19.x

@@ -2,6 +2,10 @@ name: Core – Build, Lint & Test
 
 on:
   push:
+    branches:
+      - master
+      - develop
+
     paths:
       - 'packages/core/**'
       - 'pnpm-lock.yaml'

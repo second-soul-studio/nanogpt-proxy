@@ -115,8 +115,11 @@ Before you start:
 * Git
 * Node.js 20.19.0 (recommended)
 * Suggested: use nvm (Node Version Manager) - See: [docs/NVM.md](docs/NVM.md)
-
 * pnpm (package manager)
+
+Using IntelliJ IDEA?
+
+* See [docs/INTELLIJ-IDEA.md](docs/INTELLIJ-IDEA.md)
 
 # 🌮 Setup
 

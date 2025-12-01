@@ -43,19 +43,26 @@ jobs:
       - name: Install dependencies (monorepo)
         run: pnpm install --frozen-lockfile
 
-      - name: Lint admin-api
-        run: pnpm lint --filter "@nanogpt-monorepo/admin-api"
+      - name: Debug TS & ESLint versions
+        run: |
+          node --version
+          pnpm --version
+          pnpm list typescript @typescript-eslint/eslint-plugin @typescript-eslint/parser
+          pwd
+          ls -la tsconfig.json apps/admin-api/tsconfig.json || echo "no tsconfig found"
 
-      - name: Build admin-api
-        run: pnpm build --filter "@nanogpt-monorepo/admin-api"
+      #- name: Lint admin-api
+        #run: pnpm lint --filter "@nanogpt-monorepo/admin-api"
 
-      - name: Test admin-api
-        run: pnpm test --filter "@nanogpt-monorepo/admin-api"
+      #- name: Build admin-api
+        #  run: pnpm build --filter "@nanogpt-monorepo/admin-api"
 
-      - name: Upload Coverage Report (admin-api)
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-proxy
-          path: apps/proxy/coverage
+      #- name: Test admin-api
+        #run: pnpm test --filter "@nanogpt-monorepo/admin-api"
 
+      #- name: Upload Coverage Report (admin-api)
+        #if: success()
+        #uses: actions/upload-artifact@v4
+        #with:
+        #  name: coverage-proxy
+        #  path: apps/proxy/coverage

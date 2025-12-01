@@ -1,0 +1,18 @@
+### GET models
+GET http://localhost:3000/v1/models
+
+###
+
+### POST chat completion
+POST http://localhost:3000/v1/chat/completions
+Authorization: Bearer {{apikey}}
+Content-Type: application/json
+x-openwebui-user-email: {{email}}
+
+{
+  "model": "z-ai/glm-4.6",
+  "messages": [
+    { "role": "user", "content": "Hello, is it me you are looking for?" }
+  ]
+}
+###

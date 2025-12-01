@@ -95,7 +95,6 @@ dist
 
 # vuepress v2.x temp and cache directory
 .temp
-.cache
 
 # Sveltekit cache directory
 .svelte-kit/
@@ -150,3 +149,5 @@ node_modules
 # Turbo
 .turbo
 **/.turbo
+/apps/proxy/queries/http-client.private.env.json
+/apps/admin-api/queries/http-client.private.env.json

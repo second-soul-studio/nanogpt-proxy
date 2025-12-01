@@ -1,25 +1,18 @@
-version: '3.9'
+version: "3.9"
 
 services:
-  proxy:
-    build: apps/proxy
-    container_name: nanogpt-proxy
-    restart: unless-stopped
+  redis:
+    image: redis:7-alpine
+    container_name: nanogpt-redis
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     ports:
-      - "3000:3000"
+      - "6379:6379"
     volumes:
-      - ./proxy/keys.db:/app/keys.db
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
     environment:
       - DB_ENCRYPTION_KEY=${DB_ENCRYPTION_KEY}
-    depends_on:
-      - db
-
-  db:
-    image: nouchka/sqlite3    
-    container_name: nanogpt-proxy-db
     restart: unless-stopped
-    command: tail -f /dev/null
-    volumes:
-      - ./proxy/keys.db:/data/keys.db
-    
 
+volumes:
+  redis-data:

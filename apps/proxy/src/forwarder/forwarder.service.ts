@@ -1,13 +1,16 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { Request, Response } from 'express';
+import { Readable } from 'node:stream';
 import { CryptorService, EnvironmentService, UserRepository } from '@nanogpt-monorepo/core';
+
+type OpenWebUiRequestBody = Record<string, unknown>;
 
 @Injectable()
 export class ForwarderService {
-  private readonly API_BASE = 'https://nano-gpt.com/api';
-  private readonly SUBSCRIPTION_API = this.API_BASE + '/subscription/v1';
-  private readonly REGULAR_API = this.API_BASE + '/v1';
+  private readonly API_BASE = 'https://nano-gpt.com/api' as const;
+  private readonly SUBSCRIPTION_API = `${this.API_BASE}/subscription/v1` as const;
+  private readonly REGULAR_API = `${this.API_BASE}/v1` as const;
 
   constructor(
     private readonly env: EnvironmentService,
@@ -15,21 +18,23 @@ export class ForwarderService {
     private readonly users: UserRepository,
   ) {}
 
-  async handleRequest(req: Request, res: Response) {
-    const userEmail = req.headers['x-openwebui-user-email'] as string;
+  async handleRequest(
+    req: Request & { body?: OpenWebUiRequestBody },
+    res: Response,
+  ): Promise<void> {
+    const userEmail = req.headers['x-openwebui-user-email'] as string | undefined;
 
     console.log(`[${req.method}] ${req.path} for ${userEmail || 'unknown user'}`);
 
-    // --- Special: /v1/models passt du durch ohne UserAuth ---
     if (req.path === '/v1/models') {
-      return this.forwardModels(res);
+      await this.forwardModels(res);
+      return;
     }
 
     if (!userEmail) {
       throw new HttpException('Missing user email header', HttpStatus.BAD_REQUEST);
     }
 
-    // --- get user from DB ---
     const entry = await this.users.getUser(userEmail);
 
     if (!entry) {
@@ -38,37 +43,52 @@ export class ForwarderService {
 
     const decryptedKey = this.cryptor.decrypt(entry.api_key);
 
-    return this.forwardGeneric(req, res, decryptedKey);
+    await this.forwardGeneric(req, res, decryptedKey);
   }
 
-  private async forwardModels(res: Response) {
+  private async forwardModels(res: Response): Promise<void> {
     try {
-      const r = await axios.get(`${this.SUBSCRIPTION_API}/models`, {
+      const r: AxiosResponse<unknown> = await axios.get(`${this.SUBSCRIPTION_API}/models`, {
         headers: { 'Content-Type': 'application/json' },
         timeout: 60_000,
       });
 
-      return res.json(r.data);
-    } catch (err: any) {
-      console.error('Error fetching models:', err.response?.data);
-      throw new HttpException(err.response?.data, HttpStatus.BAD_GATEWAY);
+      res.json(r.data);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const axiosErr = error as AxiosError<unknown>;
+        const status = axiosErr.response?.status ?? HttpStatus.BAD_GATEWAY;
+        const data = axiosErr.response?.data ?? { message: 'Error fetching models from upstream' };
+
+        console.error('Error fetching models:', data);
+        throw new HttpException(data as Record<string, unknown>, status);
+      }
+
+      console.error('Unknown error fetching models:', error);
+      throw new HttpException({ error: 'Unknown upstream error' }, HttpStatus.BAD_GATEWAY);
     }
   }
 
-  private async forwardGeneric(req: Request, res: Response, apiKey: string) {
-    const upstream = await axios({
-      url: `${this.REGULAR_API}${req.path}`,
-      method: req.method as any,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+  private async forwardGeneric(req: Request, res: Response, apiKey: string): Promise<void> {
+    const upstream: AxiosResponse<Readable> = await axios.request<unknown, AxiosResponse<Readable>>(
+      {
+        url: `${this.REGULAR_API}${req.path}`,
+        method: req.method as 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data: req.method !== 'GET' ? req.body : undefined,
+        responseType: 'stream',
+        timeout: 180_000,
       },
-      data: req.method !== 'GET' ? req.body : undefined,
-      responseType: 'stream',
-      timeout: 180_000,
-    });
+    );
 
-    res.setHeader('Content-Type', upstream.headers['content-type'] || 'application/json');
+    const contentType =
+      (upstream.headers['content-type'] as string | undefined) ?? 'application/json';
+
+    res.setHeader('Content-Type', contentType);
 
     upstream.data.pipe(res);
   }

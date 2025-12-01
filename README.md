@@ -1,4 +1,4 @@
-# 🧠 NanoGPT Multi-User Proxy for OpenWebUI
+ # 🧠 NanoGPT Multi-User Proxy for OpenWebUI
 
 A lightweight, Docker-ready **mono-repo** that exposes a proxy in front of a shared [OpenWebUI](https://github.com/open-webui/open-webui) instance, allowing **multiple users** to connect with **their own NanoGPT API key**.
 
@@ -21,7 +21,8 @@ Ideal if you want to host a single OpenWebUI for a small team, but keep each per
 ### Backend
 
 - **NestJS** (REST APIs, auth, user & key management)
-- **SQLite** (lightweight data store for users + API keys)
+- ~~**SQLite** (lightweight data store for users + API keys)~~
+- **Redis** (data store for users + API keys)
 
 ### Frontend
 
@@ -87,7 +88,7 @@ nanogpt-monorepo/
     * supports streaming.
 
 * [apps/frontend](apps/frontend)
-  * React 19 (Vite) frontend:
+  * React 19 (Vite + Mantine UI) frontend:
     * UI to manage users and API keys, 
     * UI for configuring / testing the proxy.
 

@@ -10,12 +10,16 @@ export class ForwarderController {
   async proxy(@Req() req: express.Request, @Res() res: express.Response) {
     try {
       await this.forwarder.handleRequest(req, res);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Forwarder error:', err);
-      throw new HttpException(
-        { error: err?.message ?? 'Forwarding failed' },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+
+      if (err instanceof HttpException) {
+        throw err;
+      }
+
+      const message = err instanceof Error ? err.message : 'Forwarding failed';
+
+      throw new HttpException({ error: message }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

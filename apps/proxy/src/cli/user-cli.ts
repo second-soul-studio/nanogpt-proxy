@@ -4,7 +4,46 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { CryptorService, UserRepository } from '@nanogpt-monorepo/core';
 
-async function bootstrap() {
+interface ImportUser {
+  email: string;
+  api_key: string;
+}
+
+async function readStdin(): Promise<string> {
+  return await new Promise<string>((resolve) => {
+    let data = '';
+
+    process.stdin.on('data', (chunk: Buffer) => {
+      data += chunk.toString('utf8');
+    });
+
+    process.stdin.on('end', () => resolve(data));
+  });
+}
+
+function parseImportUsers(raw: string): ImportUser[] {
+  const parsed: unknown = JSON.parse(raw);
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Invalid import format: expected an array');
+  }
+
+  return parsed.map((item) => {
+    if (typeof item !== 'object' || item === null) {
+      throw new Error('Invalid import format: expected objects');
+    }
+
+    const { email, api_key } = item as { email?: unknown; api_key?: unknown };
+
+    if (typeof email !== 'string' || typeof api_key !== 'string') {
+      throw new Error('Invalid import format: email/api_key must be strings');
+    }
+
+    return { email, api_key };
+  });
+}
+
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.createApplicationContext(AppModule, {
     logger: false,
   });
@@ -23,7 +62,7 @@ async function bootstrap() {
         process.exit(1);
       }
       const encrypted = cryptor.encrypt(apiKey);
-      await users.saveUser({ email, api_key: encrypted });
+      await users.upsertApiKey(email, encrypted);
       console.log(`✅ Added/Updated user: ${email}`);
       break;
     }
@@ -54,33 +93,28 @@ async function bootstrap() {
     }
 
     case 'import': {
-      const raw = await new Promise<string>((res) => {
-        let data = '';
-        process.stdin.on('data', (chunk) => (data += chunk));
-        process.stdin.on('end', () => res(data));
-      });
+      const raw = await readStdin();
+      const parsed = parseImportUsers(raw);
 
-      const parsed = JSON.parse(raw);
       for (const u of parsed) {
-        await users.saveUser({
-          email: u.email,
-          api_key: cryptor.encrypt(u.api_key),
-        });
+        await users.upsertApiKey(u.email, cryptor.encrypt(u.api_key));
       }
 
       console.log(`✅ Imported ${parsed.length} users`);
       break;
     }
 
-    default:
+    default: {
       console.log(`Usage:
   add-user <email> <apiKey>
   del-user <email>
   list
   import < users.json`);
+      break;
+    }
   }
 
   await app.close();
 }
 
-bootstrap();
+void bootstrap();

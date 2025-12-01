@@ -1,0 +1,96 @@
+### POST login
+POST http://{{host}}:{{port}}/v1/auth/login/
+Content-Type: application/json
+
+{
+  "email": "fish@stream.net",
+  "password": "so-secure!"
+}
+
+> {%
+    client.global.set("token", response.body.accessToken);
+%}
+###
+
+### POST users (already exists)
+POST http://localhost:3000/v1/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "fish@stream.net",
+  "password": "so-secure!"
+}
+###
+
+### POST users (happy path)
+POST http://localhost:3000/v1/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "laurie@sss.io",
+  "password": "so-secure!"
+}
+###
+
+### DELETE users
+DELETE http://localhost:3000/v1/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "laurie@sss.io",
+  "password": "so-secure!"
+}
+###
+
+### PUT users (happy path)
+PUT http://localhost:3000/v1/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "laurie@sss.io",
+  "password": "so-secure!",
+  "api_key": "f84c1d96-936d-4649-a6ee-cf231f4392c2",
+  "role": "USER"
+}
+###
+
+### PUT users (happy path)
+PUT http://localhost:3000/v1/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "fish@stream.net",
+  "password": "so-secure!",
+  "api_key": "",
+  "role": "ADMIN"
+}
+###
+
+### PUT users (can't downgrade)
+PUT http://localhost:3000/v1/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "fish@stream.net",
+  "password": "so-secure!",
+  "role": "USER"
+}
+###
+
+### GET users (secured)
+GET http://localhost:3000/v1/users
+Authorization: Bearer {{token}}
+
+###
+
+### GET users (should block)
+GET http://localhost:3000/v1/users
+Authorization: Bearer invalid
+
+###

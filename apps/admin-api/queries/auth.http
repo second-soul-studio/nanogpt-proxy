@@ -1,0 +1,40 @@
+### POST login (valid account - happy path)
+POST http://{{host}}:{{port}}/v1/auth/login/
+Content-Type: application/json
+
+{
+  "email": "fish@stream.net",
+  "password": "so-secure!"
+}
+
+> {%
+    client.global.set("token", response.body.accessToken);
+    client.global.set("refreshToken", response.body.refreshToken)
+%}
+###
+
+### POST login (invalid)
+POST http://{{host}}:{{port}}/v1/auth/login/
+Content-Type: application/json
+
+{
+  "email": "bozo@the-clown.net",
+  "password": "so-secure!"
+}
+###
+
+### POST refresh token
+POST http://localhost:3000/v1/auth/refresh
+x-refresh-token: {{refreshToken}}
+
+> {%
+    client.global.set("token", response.body.accessToken);
+    client.global.set("refreshToken", response.body.refreshToken)
+%}
+###
+
+### POST logout
+POST http://localhost:3000/v1/auth/logout
+Authorization: Bearer {{token}}
+
+###

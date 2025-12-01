@@ -21,12 +21,31 @@ export class RedisService implements OnModuleDestroy {
     await this.client.quit();
   }
 
-  // HSET user
+  // ==== String keys (JWT, blacklist, refresh, etc.) ====
+
+  async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
+    if (ttlSeconds && ttlSeconds > 0) {
+      await this.client.set(key, value, { EX: ttlSeconds });
+    } else {
+      await this.client.set(key, value);
+    }
+  }
+
+  async get(key: string): Promise<string | null> {
+    return this.client.get(key);
+  }
+
+  async exists(key: string): Promise<boolean> {
+    const n = await this.client.exists(key);
+    return n === 1;
+  }
+
+  // ==== Hash helpers (users, etc.) ====
+
   async setHash(key: string, value: Record<string, string>) {
     await this.client.hSet(key, value);
   }
 
-  // HGETALL user
   async getHash(key: string): Promise<Record<string, string> | null> {
     const data = await this.client.hGetAll(key);
     return Object.keys(data).length ? data : null;
@@ -39,7 +58,7 @@ export class RedisService implements OnModuleDestroy {
   async scan(match: string): Promise<string[]> {
     const keys: string[] = [];
 
-    for await (const item of this.client.scanIterator({ MATCH: match })) {
+    for await (const item of this.client.scanIterator({ MATCH: match }) as AsyncIterable<unknown>) {
       if (typeof item === 'string') {
         keys.push(item);
       } else if (Array.isArray(item)) {

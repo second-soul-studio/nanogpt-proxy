@@ -13,11 +13,15 @@
     "test": "turbo test",
     "format": "turbo format"
   },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  },
   "devDependencies": {
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
     "turbo": "^2.6.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@types/jsonwebtoken": "^9.0.10"
   },
   "paths": {
     "@nanogpt-monorepo/core": ["packages/core/dist"],

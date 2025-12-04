@@ -1,4 +1,3 @@
-// apps/admin-api/src/main.spec.ts
 import { NestFactory } from '@nestjs/core';
 import { EnvironmentService } from '@nanogpt-monorepo/core';
 import { AppModule } from './app.module';

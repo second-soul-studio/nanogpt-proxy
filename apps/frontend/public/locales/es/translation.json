@@ -1,0 +1,26 @@
+{
+  "button": {
+    "login": {
+      "label": "Iniciar sesión"
+    }
+  },
+  "input": {
+    "email": {
+      "label": "Correo electrónico",
+      "placeholder": "usuario@dominio.net",
+      "errors": {
+        "format": "Por favor, introduce una dirección de correo electrónico válida"
+      }
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Contraseña",
+      "errors": {
+        "min": "La contraseña debe tener al menos 6 caracteres"
+      }
+    }
+  },
+  "login": {
+    "title": "¡Bienvenido de nuevo!"
+  }
+}

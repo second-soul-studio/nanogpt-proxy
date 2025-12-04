@@ -1,0 +1,26 @@
+{
+  "button": {
+    "login": {
+      "label": "Login"
+    }
+  },
+  "input": {
+    "email": {
+      "label": "Email",
+      "placeholder": "user@domain.net",
+      "errors": {
+        "format": "Please enter a valid email address"
+      }
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password",
+      "errors": {
+        "min": "Password must be at least 6 characters"
+      }
+    }
+  },
+  "login": {
+    "title": "Welcome back!"
+  }
+}

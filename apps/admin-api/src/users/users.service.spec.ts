@@ -121,10 +121,6 @@ describe('UsersService', () => {
     expect(repo.saveUser).not.toHaveBeenCalled();
   });
 
-  // ----------------------
-  // deleteUser
-  // ----------------------
-
   it('deleteUser - raise BadRequest if user does not exists', async () => {
     const dto: DeleteUserDto = { email: 'ghost@example.com' };
     repo.getUser.mockResolvedValueOnce(null);
@@ -154,10 +150,6 @@ describe('UsersService', () => {
     expect(repo.deleteUser).toHaveBeenCalledWith(dto.email);
     expect(maskEmail).toHaveBeenCalledWith(dto.email);
   });
-
-  // ----------------------
-  // updateUser
-  // ----------------------
 
   it('updateUser - raise BadRequest if user does not exists', async () => {
     const dto: UpdateUserDto = { email: 'nope@example.com' };
@@ -237,10 +229,6 @@ describe('UsersService', () => {
     expect(repo.saveUser).toHaveBeenCalledTimes(1);
   });
 
-  // ----------------------
-  // upsertKey
-  // ----------------------
-
   it('upsertKey - raise BadRequest if user does not exists', async () => {
     const dto: UpdateUserDto = { email: 'ghost@example.com', api_key: 'x' };
     repo.getUser.mockResolvedValueOnce(null);
@@ -266,10 +254,6 @@ describe('UsersService', () => {
     expect(repo.upsertApiKey).toHaveBeenCalledWith(dto.email, dto.api_key);
     expect(maskEmail).toHaveBeenCalledWith(dto.email);
   });
-
-  // ----------------------
-  // getAll
-  // ----------------------
 
   it('getAll - delegate to UserRepository.getAllUsers', async () => {
     const users: Omit<UserEntity, 'password'>[] = [

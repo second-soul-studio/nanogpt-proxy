@@ -2,7 +2,7 @@
   "name": "nanogpt-monorepo",
   "private": true,
   "packageManager": "pnpm@10.0.0",
-  "license": "LPL-1.0"
+  "license": "LPL-1.0",
   "scripts": {
     "install:pnpm": "npm install -g pnpm@latest-10",
     "bootstrap": "pnpm install",

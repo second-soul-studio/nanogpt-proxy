@@ -29,7 +29,6 @@ describe('UsersController', () => {
         },
       ],
     })
-      // On mock les guards pour éviter toute dépendance (TokenService, etc.)
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: () => true })
       .overrideGuard(RolesGuard)

@@ -1,0 +1,26 @@
+{
+  "button": {
+    "login": {
+      "label": "Connexion"
+    }
+  },
+  "input": {
+    "email": {
+      "label": "Adresse courriel",
+      "placeholder": "usager@domaine.net",
+      "errors": {
+        "format": "Veuillez entrer une adresse courriel valide"
+      }
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Mot de passe",
+      "errors": {
+        "min": "Le mot de passe doit contenir au moins 6 caractères"
+      }
+    }
+  },
+  "login": {
+    "title": "Ravis de vous revoir!"
+  }
+}

@@ -3,9 +3,8 @@ import { randomUUID } from 'crypto';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { EnvironmentService, RedisService } from '@nanogpt-monorepo/core';
 import { UserEntity } from '@nanogpt-monorepo/core/dist/entities/user-entity';
-import { JwtAccessTokenPayload } from '@nanogpt-monorepo/core/dist/types/jwt-access-token-payload';
 import { JwtType } from '@nanogpt-monorepo/core/dist/enums/jwt-type';
-import { JwtRefreshTokenPayload } from '@nanogpt-monorepo/core/dist/types/jwt-refresh-token-payload';
+import type { JwtAccessTokenPayload, JwtRefreshTokenPayload } from '@nanogpt-monorepo/core';
 
 const PREFIX = 'jwt:nanogpt';
 

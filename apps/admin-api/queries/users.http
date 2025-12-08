@@ -13,7 +13,7 @@ Content-Type: application/json
 ###
 
 ### POST users (already exists)
-POST http://localhost:3000/v1/users
+POST http://localhost:{{port}}/v1/users
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -24,7 +24,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### POST users (happy path)
-POST http://localhost:3000/v1/users
+POST http://localhost:{{port}}/v1/users
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -35,7 +35,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### DELETE users
-DELETE http://localhost:3000/v1/users
+DELETE http://localhost:{{port}}/v1/users
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -45,8 +45,8 @@ Authorization: Bearer {{token}}
 }
 ###
 
-### PUT users (happy path)
-PUT http://localhost:3000/v1/users
+### PUT users (happy path) - Note: That API key is fake
+PUT http://localhost:{{port}}/v1/users
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -59,7 +59,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### PUT users (happy path)
-PUT http://localhost:3000/v1/users
+PUT http://localhost:{{port}}/v1/users
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -72,7 +72,7 @@ Authorization: Bearer {{token}}
 ###
 
 ### PUT users (can't downgrade)
-PUT http://localhost:3000/v1/users
+PUT http://localhost:{{port}}/v1/users
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -84,13 +84,13 @@ Authorization: Bearer {{token}}
 ###
 
 ### GET users (secured)
-GET http://localhost:3000/v1/users
+GET http://localhost:{{port}}/v1/users
 Authorization: Bearer {{token}}
 
 ###
 
 ### GET users (should block)
-GET http://localhost:3000/v1/users
+GET http://localhost:{{port}}/v1/users
 Authorization: Bearer invalid
 
 ###

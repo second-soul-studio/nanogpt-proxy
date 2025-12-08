@@ -24,5 +24,15 @@ services:
     ports:
       - "3001:3001"
 
+  proxy:
+    image: nanogpt-proxy
+    container_name: nanogpt-proxy
+    depends_on:
+      - redis
+    environment:
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3000:3000"
+
 volumes:
   redis-data:

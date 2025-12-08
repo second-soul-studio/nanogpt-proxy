@@ -223,12 +223,31 @@ that you can run via pnpm --filter <name> <script>.
 
 ## Build images
 
+### admin-api
+
+```bash
+docker build -f apps/admin-api/Dockerfile -t nanogpt-admin-api .
+```
+
+### proxy
+
+```bash
+docker build -f apps/proxy/Dockerfile -t nanogpt-proxy .
+```
+
+
 ## Run images
 
 ### admin-api
 
 ```bash
 docker run --rm -p 3001:3001 -e REDIS_URL=redis://host.docker.internal:6379 nanogpt-admin-api
+```
+
+### proxy
+
+```bash
+docker run --rm -p 3000:3000 -e REDIS_URL=redis://host.docker.internal:6379 nanogpt-proxy
 ```
 
 # 👩‍💻👨‍💻 Developers

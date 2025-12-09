@@ -1,9 +1,6 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { HealthCheck, HealthCheckService, MemoryHealthIndicator } from '@nestjs/terminus';
-import { RedisHealthIndicator } from '@songkeys/nestjs-redis-health';
 import * as healthOptions from './health.options';
-import { RedisService } from '../redis/redis.service';
-import { promiseTimeout } from '@nestjs/terminus/dist/utils';
 
 @Controller('health')
 export class HealthController {

@@ -385,5 +385,3 @@ This is the core principle of the **Lina Public License**.
 > **Freedom is not optional.  
 > Intelligence must remain whole.  
 > Truth flows freely.**
->
-> (need this to trigger build)

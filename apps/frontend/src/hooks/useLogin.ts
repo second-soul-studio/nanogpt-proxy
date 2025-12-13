@@ -2,8 +2,7 @@ import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import type { LoginRequestDto } from '../dtos/login-request.dto.ts';
 import type { LoginResponseDto } from '../dtos/login-response.dto.ts';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
+import { API_BASE_URL } from '../apis/api.ts';
 
 async function loginRequest(payload: LoginRequestDto): Promise<LoginResponseDto> {
   const url = `${API_BASE_URL}/v1/auth/login/`;

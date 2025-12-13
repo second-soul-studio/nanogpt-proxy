@@ -2,8 +2,7 @@ import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import type { LogoutResponseDto } from '../dtos/logout-response.dto';
 import { getAccessToken } from '../utilities/cookies.utilities';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
+import { API_BASE_URL } from '../apis/api.ts';
 
 async function logoutRequest(): Promise<LogoutResponseDto> {
   const url = `${API_BASE_URL}/v1/auth/logout/`;

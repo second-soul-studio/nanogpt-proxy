@@ -15,7 +15,8 @@ FROM nginx:1.27-alpine AS runner
 COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
+COPY apps/frontend/docker-entrypoint.sh /docker-entrypoint.sh
 
-EXPOSE 80
+RUN chmod +x /docker-entrypoint.sh
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

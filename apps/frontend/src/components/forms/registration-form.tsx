@@ -81,7 +81,7 @@ function RegistrationForm() {
   return (
     <Container size="sm" my="xl">
       <Title ta="center" mb="xs">
-        {t('register.title', 'Create your account')}
+        {t('register.title')}
       </Title>
       <Text ta="center" c="dimmed" mb="lg">
         NanoGPT Proxy
@@ -90,8 +90,8 @@ function RegistrationForm() {
       <Paper withBorder shadow="sm" p="lg" radius="md">
         <Stepper active={active} allowNextStepsSelect={false} size="sm">
           <Stepper.Step
-            label={t('register.steps.email.label', 'Email')}
-            description={t('register.steps.email.description', 'Enter your email address')}
+            label={t('register.steps.email.label')}
+            description={t('register.steps.email.description')}
           >
             <Box mt="md">
               <TextInput
@@ -104,8 +104,8 @@ function RegistrationForm() {
           </Stepper.Step>
 
           <Stepper.Step
-            label={t('register.steps.password.label', 'Password')}
-            description={t('register.steps.password.description', 'Choose a secure password')}
+            label={t('register.steps.password.label')}
+            description={t('register.steps.password.description')}
           >
             <Box mt="md">
               <PasswordInput
@@ -119,25 +119,17 @@ function RegistrationForm() {
 
           <Stepper.Completed>
             <Box mt="md">
-              {isPending && (
-                <Text ta="center">{t('register.status.creating', 'Creating your account...')}</Text>
-              )}
+              {isPending && <Text ta="center">{t('register.status.creating')}</Text>}
 
               {isSuccess && data && (
                 <>
                   {data.pendingReview ? (
                     <Alert color="blue" variant="light" icon={<IconCheck size={16} />}>
-                      {t(
-                        'register.status.pending',
-                        'Your account has been created and is pending review. You will be able to sign in once it is approved.',
-                      )}
+                      {t('register.status.pending')}
                     </Alert>
                   ) : (
                     <Alert color="green" variant="light" icon={<IconCheck size={16} />}>
-                      {t(
-                        'register.status.success',
-                        'Your account has been created successfully. You are being logged in…',
-                      )}
+                      {t('register.status.success')}
                     </Alert>
                   )}
                 </>
@@ -154,14 +146,12 @@ function RegistrationForm() {
 
         <Box mt="xl" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button variant="default" onClick={handleBack} disabled={active === 0 || isPending}>
-            {t('common.back', 'Back')}
+            {t('button.back.label')}
           </Button>
 
           {active < 2 && (
             <Button onClick={handleNext} loading={isPending}>
-              {active === 1
-                ? t('register.actions.create', 'Create account')
-                : t('common.next', 'Next')}
+              {active === 1 ? t('button.createAccount.label') : t('button.back.label')}
             </Button>
           )}
         </Box>

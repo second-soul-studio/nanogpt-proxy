@@ -3,6 +3,7 @@ import LoginLayout from './components/layouts/login-layout.tsx';
 import LoginForm from './components/forms/login-form.tsx';
 import { AuthGuard } from './guards/auth.guard.tsx';
 import AdminLayout from './components/layouts/admin-layout.tsx';
+import RegistrationForm from './components/forms/registration-form.tsx';
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
       {/* Public route(s) */}
       <Route path="/" element={<LoginLayout />}>
         <Route index element={<LoginForm />} />
-        <Route path="/registration" element={<>Registration placeholder</>} />
+        <Route path="/registration" element={<RegistrationForm />} />
       </Route>
 
       {/* Private route(s) */}

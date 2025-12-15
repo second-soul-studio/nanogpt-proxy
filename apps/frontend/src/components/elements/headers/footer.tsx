@@ -1,8 +1,10 @@
 import { Anchor, Stack, Text, Container } from '@mantine/core';
 import { copyrightYears } from '../../../utilities/copyright.utilities.ts';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 function Footer() {
+  const { t } = useTranslation();
+
   return (
     <Container py="sm">
       <Stack gap={2} align="center">
@@ -14,7 +16,7 @@ function Footer() {
           >
             {t('footer.authors')}
           </Anchor>
-          . {t('footer.allRightsReserved')}.
+          . {t('footer.allRightsReserved')}
         </Text>
         <Text ta="center" size="xs" c="dimmed" maw={900}>
           <Anchor

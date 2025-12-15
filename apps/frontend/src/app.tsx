@@ -10,6 +10,7 @@ function App() {
       {/* Public route(s) */}
       <Route path="/" element={<LoginLayout />}>
         <Route index element={<LoginForm />} />
+        <Route path="/registration" element={<>Registration placeholder</>} />
       </Route>
 
       {/* Private route(s) */}

@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Container,
+  Group,
   Paper,
   PasswordInput,
   Text,
@@ -17,10 +18,13 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import { setAuthCookies } from '../../utilities/cookies.utilities.ts';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useConfiguration } from '../../hooks/useConfiguration.ts';
 
 function LoginForm() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const { config: config } = useConfiguration();
 
   const {
     mutate: login,
@@ -57,6 +61,10 @@ function LoginForm() {
       password: values.password,
     });
   };
+
+  const enableForgot = config?.forgetPassword ?? false;
+  const enableRegistration = config?.registration ?? false;
+  const showActions = enableForgot || enableRegistration;
 
   return (
     <Container size={420} my={40}>
@@ -99,6 +107,30 @@ function LoginForm() {
           <Button fullWidth mt="xl" radius="md" type="submit" loading={isPending}>
             {t('button.login.label')}
           </Button>
+
+          {showActions && (
+            <Box mt="md">
+              <Group justify="space-between" gap="xs" wrap="wrap">
+                {enableForgot && (
+                  <Button variant="subtle" size="xs" onClick={() => navigate('/forgot-password')}>
+                    {t('login.forgotPassword')}
+                  </Button>
+                )}
+
+                {enableRegistration && (
+                  <Button variant="outline" size="xs" onClick={() => navigate('/registration')}>
+                    {t('login.register')}
+                  </Button>
+                )}
+              </Group>
+
+              {enableRegistration && config?.reviewPendingRegistration && (
+                <Text mt="xs" size="xs" c="dimmed">
+                  {t('login.registrationPendingReviewHint')}
+                </Text>
+              )}
+            </Box>
+          )}
         </Box>
       </Paper>
     </Container>

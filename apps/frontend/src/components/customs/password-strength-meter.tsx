@@ -23,11 +23,17 @@ function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) {
     const strength = (passed / 4) * 100;
 
     let labelKey: string;
-    if (strength === 0) labelKey = 'input.password.strength.empty';
-    else if (strength <= 25) labelKey = 'input.password.strength.weak';
-    else if (strength <= 50) labelKey = 'input.password.strength.fair';
-    else if (strength <= 75) labelKey = 'input.password.strength.good';
-    else labelKey = 'input.password.strength.strong';
+    if (strength === 0) {
+      labelKey = 'input.password.strength.empty';
+    } else if (strength <= 25) {
+      labelKey = 'input.password.strength.weak';
+    } else if (strength <= 50) {
+      labelKey = 'input.password.strength.fair';
+    } else if (strength <= 75) {
+      labelKey = 'input.password.strength.good';
+    } else {
+      labelKey = 'input.password.strength.strong';
+    }
 
     return {
       strength,
@@ -78,7 +84,7 @@ function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) {
 
       <Progress value={strength} size="sm" mt={4} />
 
-      <List spacing={4} size="xs" mt={4}>
+      <List spacing={4} size="xs" mt={8}>
         {rules.map((rule) => (
           <List.Item
             key={rule.text}

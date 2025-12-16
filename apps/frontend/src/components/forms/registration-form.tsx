@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { setAuthCookies } from '../../utilities/cookies.utilities';
@@ -99,6 +99,16 @@ function RegistrationForm() {
     setActive((current) => Math.max(0, current - 1));
   };
 
+  const isPasswordValid = useMemo(
+    () => validatePasswordRaw(form.values.password).valid,
+    [form.values.password],
+  );
+
+  const isEmailValid = !form.errors.email && !!form.values.email;
+
+  const isNextDisabled =
+    isPending || (active === 0 && !isEmailValid) || (active === 1 && !isPasswordValid);
+
   return (
     <Container size="sm" my="xl">
       <Title ta="center" mb="xs">
@@ -138,6 +148,12 @@ function RegistrationForm() {
 
               <PasswordStrengthMeter password={form.values.password} />
             </Box>
+
+            {error && (
+              <Alert mt="md" color="red" variant="light" icon={<IconAlertCircle size={16} />}>
+                {error.message}
+              </Alert>
+            )}
           </Stepper.Step>
 
           <Stepper.Completed>
@@ -157,12 +173,6 @@ function RegistrationForm() {
                   )}
                 </>
               )}
-
-              {error && (
-                <Alert mt="md" color="red" variant="light" icon={<IconAlertCircle size={16} />}>
-                  {error.message}
-                </Alert>
-              )}
             </Box>
           </Stepper.Completed>
         </Stepper>
@@ -173,7 +183,7 @@ function RegistrationForm() {
           </Button>
 
           {active < 2 && (
-            <Button onClick={handleNext} loading={isPending}>
+            <Button onClick={handleNext} loading={isPending} disabled={isNextDisabled}>
               {active === 1 ? t('button.createAccount.label') : t('button.next.label')}
             </Button>
           )}

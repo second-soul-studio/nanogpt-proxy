@@ -60,7 +60,9 @@
   },
   "register": {
     "status": {
-      "creating": "Creando tu cuenta..."
+      "creating": "Creando tu cuenta...",
+      "pending": "Tu cuenta ha sido creada y está pendiente de revisión. Podrás iniciar sesión una vez que sea aprobada.",
+      "success": "Tu cuenta se ha creado correctamente. Iniciando sesión.."
     },
     "steps": {
       "email": {

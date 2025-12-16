@@ -60,7 +60,9 @@
   },
   "register": {
     "status": {
-      "creating": "Ihr Konto wird erstellt..."
+      "creating": "Ihr Konto wird erstellt...",
+      "pending": "Ihr Konto wurde erstellt und wartet auf Überprüfung. Sie können sich anmelden, sobald es genehmigt wurde.",
+      "success": "Ihr Konto wurde erfolgreich erstellt. Sie werden jetzt angemeldet..."
     },
     "steps": {
       "email": {

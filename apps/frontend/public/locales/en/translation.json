@@ -60,7 +60,9 @@
   },
   "register": {
     "status": {
-      "creating": "Creating your account..."
+      "creating": "Creating your account...",
+      "pending": "Your account has been created and is pending review. You will be able to sign in once it is approved.",
+      "success": "Your account has been created successfully. You are being logged in…"
     },
     "steps": {
       "email": {

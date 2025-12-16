@@ -1,39 +1,55 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import axios from 'axios';
+import { createContext, useCallback, useEffect, useState, type ReactNode } from 'react';
 import {
   getAccessToken,
   getRefreshToken,
   setAuthCookies,
   clearAuthCookies,
 } from '../utilities/cookies.utilities';
-
-import axios from 'axios';
-import type { AuthUser } from '../types/auth-user.ts';
-import { API_BASE_URL } from '../apis/api.ts';
-import { userFromAccessToken } from '../utilities/auth-user.utilities,ts.ts';
-import { isJwtExpired } from '../utilities/jwt.utilities.ts';
+import type { AuthUser } from '../types/auth-user';
+import { API_BASE_URL } from '../apis/api';
+import { userFromAccessToken } from '../utilities/auth-user.utilities';
+import { isJwtExpired } from '../utilities/jwt.utilities';
 
 type AuthContextValue = {
   user: AuthUser | null;
   isLoading: boolean;
-  setUser: (user: AuthUser | null) => void;
-  logout: () => void;
+  setSession: (params: { accessToken: string; refreshToken: string }) => void;
+  clearSession: () => void;
 };
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    const accessToken = getAccessToken();
+    if (!accessToken || isJwtExpired(accessToken)) {
+      return null;
+    }
+    return userFromAccessToken(accessToken);
+  });
+
   const [isLoading, setIsLoading] = useState(true);
 
-  const performLogout = useCallback(() => {
+  const clearSession = useCallback(() => {
     clearAuthCookies();
     setUser(null);
   }, []);
 
+  const setSession = useCallback(
+    ({ accessToken, refreshToken }: { accessToken: string; refreshToken: string }) => {
+      setAuthCookies({ accessToken, refreshToken });
+
+      const nextUser = userFromAccessToken(accessToken);
+      setUser(nextUser);
+    },
+    [],
+  );
+
   const tryRefresh = useCallback(async () => {
     const refreshToken = getRefreshToken();
     if (!refreshToken) {
-      performLogout();
+      clearSession();
       return null;
     }
 
@@ -48,19 +64,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       });
 
-      setAuthCookies({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      });
-
-      const refreshedUser = userFromAccessToken(data.accessToken);
-      setUser(refreshedUser);
-      return refreshedUser;
+      setSession({ accessToken: data.accessToken, refreshToken: data.refreshToken });
+      return userFromAccessToken(data.accessToken);
     } catch (e) {
-      performLogout();
+      clearSession();
       return null;
     }
-  }, [performLogout]);
+  }, [clearSession, setSession]);
 
   useEffect(() => {
     const init = async () => {
@@ -88,17 +98,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextValue = {
     user,
     isLoading,
-    setUser,
-    logout: performLogout,
+    setSession,
+    clearSession,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
 }

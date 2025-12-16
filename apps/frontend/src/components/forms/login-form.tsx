@@ -15,16 +15,17 @@ import { useLogin } from '../../hooks/useLogin.ts';
 import { useForm } from '@mantine/form';
 import type { LoginRequestDto } from '../../dtos/login-request.dto.ts';
 import { IconAlertCircle } from '@tabler/icons-react';
-import { setAuthCookies } from '../../utilities/cookies.utilities.ts';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useConfiguration } from '../../hooks/useConfiguration.ts';
+import { useAuth } from '../../hooks/useAuth.ts';
 
 function LoginForm() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { config: config } = useConfiguration();
+  const { setSession } = useAuth();
 
   const {
     mutate: login,
@@ -32,7 +33,7 @@ function LoginForm() {
     error,
   } = useLogin({
     onSuccess: (data) => {
-      setAuthCookies({
+      setSession({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
       });

@@ -13,15 +13,17 @@ function mapRolesToAuthRole(r?: string[]): AuthRole {
 }
 
 export function userFromAccessToken(token: string | null): AuthUser | null {
-  if (!token) return null;
+  if (!token) {
+    return null;
+  }
 
   const payload = decodeJwt(token);
   if (!payload?.sub) return null;
 
-  const role = mapRolesToAuthRole(payload.r);
+  const roles = mapRolesToAuthRole(payload.r);
 
   return {
     email: payload.sub,
-    role,
+    roles,
   };
 }

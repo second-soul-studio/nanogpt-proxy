@@ -19,6 +19,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<>Admin dashboard to implement</>} />
           <Route path="apikey" element={<>Api keys</>} />
+          <Route path="profile" element={<>Profile</>} />
           <Route path="settings" element={<>Settings</>} />
         </Route>
       </Route>

@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import type { LogoutResponseDto } from '../dtos/logout-response.dto';
 import { getAccessToken } from '../utilities/cookies.utilities';
 import { API_BASE_URL } from '../apis/api.ts';
+import { api } from '../apis/axios-client.ts';
 
 async function logoutRequest(): Promise<LogoutResponseDto> {
   const url = `${API_BASE_URL}/v1/auth/logout/`;
@@ -14,7 +14,7 @@ async function logoutRequest(): Promise<LogoutResponseDto> {
     headers.Authorization = `Bearer ${accessToken}`;
   }
 
-  const { data } = await axios.post<LogoutResponseDto>(url, undefined, {
+  const { data } = await api.post<LogoutResponseDto>(url, undefined, {
     withCredentials: true,
     headers,
   });

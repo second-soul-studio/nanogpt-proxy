@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { clearAuthCookies } from '../../utilities/cookies.utilities.ts';
 import { useLogout } from '../../hooks/useLogout.ts';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../contexts/auth.context.tsx';
 
 const data = [
   { link: '/admin', label: 'menu.items.administer', roles: ['ADMIN'], icon: IconUsersPlus },
@@ -16,22 +17,27 @@ const data = [
 function NavBar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user, logout: logoutAuth } = useAuth();
 
   const { mutate: logout } = useLogout({
     onSuccess: () => {
       clearAuthCookies();
+      logoutAuth();
       navigate('/', { replace: true });
     },
     onError: (err) => {
       console.error('Logout failed', err);
-      clearAuthCookies(); // tu peux aussi décider de forcer le cleanup
+      clearAuthCookies();
+      logoutAuth();
       navigate('/', { replace: true });
     },
   });
 
   const [active, setActive] = useState('Administer');
 
-  const links = data.map((item) => (
+  const visibleLinks = data.filter((item) => (user ? item.roles.includes(user.role) : false));
+
+  const links = visibleLinks.map((item) => (
     <a
       className={classes.link}
       data-active={item.label === active || undefined}

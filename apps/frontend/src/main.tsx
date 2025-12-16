@@ -9,15 +9,18 @@ import './index.scss';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n.ts';
 import { BrowserRouter } from 'react-router';
+import { AuthProvider } from './contexts/auth.context.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <I18nextProvider i18n={i18n}>
         <MantineProvider defaultColorScheme="dark">
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <AuthProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AuthProvider>
         </MantineProvider>
       </I18nextProvider>
     </QueryClientProvider>

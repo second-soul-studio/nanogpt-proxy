@@ -7,7 +7,7 @@ import {
   clearAuthCookies,
   setAuthCookies,
 } from '../../utilities/cookies.utilities';
-import { isJwtExpired } from '../../utilities/jwt.utilities';
+import { decodeJwt, isJwtExpired } from '../../utilities/jwt.utilities';
 import { renderWithProviders } from '../../__tests__/utilities/test.utilities.tsx';
 import { Route, Routes } from 'react-router';
 import { AuthGuard } from '../auth.guard.tsx';
@@ -23,6 +23,7 @@ vi.mock('../../utilities/cookies.utilities', () => ({
 
 vi.mock('../../utilities/jwt.utilities', () => ({
   isJwtExpired: vi.fn(),
+  decodeJwt: vi.fn(),
 }));
 
 const mockedAxiosPost = axios.post as unknown as Mock;
@@ -31,10 +32,16 @@ const mockedGetRefreshToken = getRefreshToken as unknown as Mock;
 const mockedClearAuthCookies = clearAuthCookies as unknown as Mock;
 const mockedSetAuthCookies = setAuthCookies as unknown as Mock;
 const mockedIsJwtExpired = isJwtExpired as unknown as Mock;
+const mockedDecodeJwt = decodeJwt as unknown as Mock;
 
 describe('<AuthGuard />', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    mockedDecodeJwt.mockReturnValue({
+      sub: 'admin@example.com',
+      role: 'ADMIN',
+    });
   });
 
   function renderProtected(initialEntries: string[] = ['/admin']) {
@@ -65,20 +72,21 @@ describe('<AuthGuard />', () => {
     expect(mockedClearAuthCookies).not.toHaveBeenCalled();
   });
 
-  it('clears cookies and redirects when there is no refresh token', async () => {
+  it('keeps user authenticated when there is an access token even if there is no refresh token', async () => {
     /* Arrange */
     mockedGetAccessToken.mockReturnValue('dummy-access');
     mockedGetRefreshToken.mockReturnValue(null);
+    mockedIsJwtExpired.mockReturnValue(false);
 
     /* Act */
     renderProtected(['/admin']);
 
     /* Assert */
     await waitFor(() => {
-      expect(screen.getByText('Public page')).toBeInTheDocument();
+      expect(screen.getByText('Protected content')).toBeInTheDocument();
     });
 
-    expect(mockedClearAuthCookies).toHaveBeenCalledTimes(1);
+    expect(mockedClearAuthCookies).not.toHaveBeenCalled();
   });
 
   it('renders protected content when access token is valid and not expired', async () => {
@@ -121,10 +129,13 @@ describe('<AuthGuard />', () => {
     });
 
     expect(mockedAxiosPost).toHaveBeenCalledWith(
-      expect.stringMatching(/\/v1\/auth\/refresh$/),
-      { refreshToken: 'valid-refresh' },
+      expect.stringMatching(/\/v1\/auth\/refresh\/$/), // note le / final
+      null,
       {
-        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+        headers: {
+          'x-refresh-token': 'valid-refresh',
+        },
       },
     );
 

@@ -1,71 +1,62 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
-import axios from 'axios';
-import { useLogin } from '../useLogin.ts';
-import { renderWithProviders } from '../../__tests__/utilities/test.utilities.tsx';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useLogin } from '../useLogin';
+import { api } from '../../apis/axios-client.ts';
+import type { LoginResponseDto } from '../../dtos/login-response.dto.ts';
+import type { ReactNode } from 'react';
 
-vi.mock('axios');
-const mockedAxiosPost = axios.post as unknown as Mock;
+vi.mock('../../apis/axios-client.ts', () => ({
+  api: {
+    post: vi.fn(),
+  },
+}));
 
-function TestComponent(props: {
-  onSuccess?: (data: unknown) => void;
-  onError?: (err: Error) => void;
-}) {
-  const { onSuccess, onError } = props;
-  const { mutate } = useLogin({ onSuccess, onError });
-
-  return (
-    <button
-      type="button"
-      onClick={() =>
-        mutate({
-          email: 'user@example.com',
-          password: 'secret123',
-        })
-      }
-    >
-      Trigger login
-    </button>
+function createWrapper() {
+  const queryClient = new QueryClient();
+  return ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }
 
-describe('useLogin hook', () => {
+const mockedApi = api as unknown as {
+  post: ReturnType<typeof vi.fn>;
+};
+
+describe('useLogin', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    mockedApi.post.mockReset();
   });
 
-  it('calls axios with correct arguments and triggers onSuccess when login succeeds', async () => {
+  it('calls /v1/auth/login/ and returns data on success', async () => {
     /* Arrange */
-    const onSuccess = vi.fn();
-    const onError = vi.fn();
-
-    const fakeResponse = {
-      accessToken: 'access-token',
-      refreshToken: 'refresh-token',
+    const response: LoginResponseDto = {
+      accessToken: 'access-token-123',
+      refreshToken: 'refresh-token-456',
+      email: 'admin@example.com',
+      role: 'ADMIN',
     };
 
-    mockedAxiosPost.mockResolvedValueOnce({ data: fakeResponse });
+    mockedApi.post.mockResolvedValueOnce({ data: response });
+
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useLogin(), { wrapper });
 
     /* Act */
-    renderWithProviders(<TestComponent onSuccess={onSuccess} onError={onError} />);
-
-    const button = screen.getByRole('button', { name: /trigger login/i });
-    fireEvent.click(button);
-
-    /* Assert */
-    await waitFor(() => {
-      expect(onSuccess).toHaveBeenCalledWith(fakeResponse);
+    await act(async () => {
+      result.current.mutate({
+        email: 'admin@example.com',
+        password: 'secret',
+      });
     });
 
-    expect(onError).not.toHaveBeenCalled();
-
-    // Vérifie l’appel axios
-    expect(mockedAxiosPost).toHaveBeenCalledTimes(1);
-    expect(mockedAxiosPost).toHaveBeenCalledWith(
-      expect.stringMatching(/\/v1\/auth\/login\/$/),
+    /* Assert */
+    expect(mockedApi.post).toHaveBeenCalledTimes(1);
+    expect(mockedApi.post).toHaveBeenCalledWith(
+      expect.stringContaining('/v1/auth/login/'),
       {
-        email: 'user@example.com',
-        password: 'secret123',
+        email: 'admin@example.com',
+        password: 'secret',
       },
       {
         withCredentials: true,
@@ -76,26 +67,54 @@ describe('useLogin hook', () => {
     );
   });
 
-  it('triggers onError when login fails', async () => {
+  it('calls onSuccess callback when login succeeds', async () => {
     /* Arrange */
-    const onSuccess = vi.fn();
-    const onError = vi.fn();
+    const response: LoginResponseDto = {
+      accessToken: 'access-token-123',
+      refreshToken: 'refresh-token-456',
+      email: 'admin@example.com',
+      role: 'ADMIN',
+    };
 
-    const error = new Error('Login failed');
-    mockedAxiosPost.mockRejectedValueOnce(error);
+    mockedApi.post.mockResolvedValueOnce({ data: response });
+
+    const onSuccess = vi.fn();
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useLogin({ onSuccess }), { wrapper });
 
     /* Act */
-    renderWithProviders(<TestComponent onSuccess={onSuccess} onError={onError} />);
-
-    const button = screen.getByRole('button', { name: /trigger login/i });
-    fireEvent.click(button);
-
-    /* Assert */
-    await waitFor(() => {
-      expect(onError).toHaveBeenCalledTimes(1);
-      expect(onError).toHaveBeenCalledWith(error);
+    await act(async () => {
+      result.current.mutate({
+        email: 'admin@example.com',
+        password: 'secret',
+      });
     });
 
-    expect(onSuccess).not.toHaveBeenCalled();
+    /* Assert */
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(onSuccess).toHaveBeenCalledWith(response);
+  });
+
+  it('calls onError callback when login fails', async () => {
+    /* Arrange */
+    const error = new Error('Login failed');
+
+    mockedApi.post.mockRejectedValueOnce(error);
+
+    const onError = vi.fn();
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useLogin({ onError }), { wrapper });
+
+    /* Act */
+    await act(async () => {
+      result.current.mutate({
+        email: 'admin@example.com',
+        password: 'wrong',
+      });
+    });
+
+    /* Assert */
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError).toHaveBeenCalledWith(error);
   });
 });

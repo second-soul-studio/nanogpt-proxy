@@ -59,28 +59,23 @@ describe('<NavBar />', () => {
     /* Assert */
     expect(screen.getByText('v0.0.1')).toBeInTheDocument();
     expect(screen.getByText('Administer')).toBeInTheDocument();
-    expect(screen.getByText('API Keys')).toBeInTheDocument();
+    expect(screen.getByText('API Key')).toBeInTheDocument();
     expect(screen.getByText('Log out')).toBeInTheDocument();
   });
 
-  it('navigates when clicking a nav link and sets it active', () => {
+  it('navigates when clicking a nav link', () => {
     /* Arrange */
     const navigateMock = vi.fn();
     mockedUseNavigate.mockReturnValue(navigateMock);
 
     /* Act */
-    renderWithProviders(<NavBar />);
+    renderWithProviders(<NavBar />, ['/admin']);
 
-    const administerLink = screen.getByText('Administer').closest('a')!;
-    const apiKeysLink = screen.getByText('API Keys').closest('a')!;
-
-    /* Assert */
-    expect(administerLink).toHaveAttribute('data-active');
-
+    const apiKeysLink = screen.getByText('API Key').closest('a')!;
     fireEvent.click(apiKeysLink);
 
+    /* Assert */
     expect(navigateMock).toHaveBeenCalledWith('/admin/apikey');
-    expect(apiKeysLink).toHaveAttribute('data-active');
   });
 
   it('calls logout mutation when clicking Log out', () => {

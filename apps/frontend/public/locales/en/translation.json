@@ -61,7 +61,7 @@
   "menu": {
     "items": {
       "administer": "Administer",
-      "apiKeys": "API Key",
+      "apiKey": "API Key",
       "settings": "Settings",
       "logout": "Log out"
     }

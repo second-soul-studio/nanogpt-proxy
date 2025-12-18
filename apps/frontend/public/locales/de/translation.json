@@ -61,7 +61,7 @@
   "menu": {
     "items": {
       "administer": "Verwalten",
-      "apiKeys": "API-Schlüssel",
+      "apiKey": "API-Schlüssel",
       "settings": "Einstellungen",
       "logout": "Abmelden"
     }

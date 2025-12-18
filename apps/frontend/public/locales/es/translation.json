@@ -61,7 +61,7 @@
   "menu": {
     "items": {
       "administer": "Administrar",
-      "apiKeys": "Clave API",
+      "apiKey": "Clave API",
       "settings": "Configuración",
       "logout": "Cerrar sesión"
     }

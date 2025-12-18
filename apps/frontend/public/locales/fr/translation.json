@@ -61,7 +61,7 @@
   "menu": {
     "items": {
       "administer": "Administrer",
-      "apiKeys": "Clé API",
+      "apiKey": "Clé API",
       "settings": "Paramètres",
       "logout": "Déconnexion"
     }

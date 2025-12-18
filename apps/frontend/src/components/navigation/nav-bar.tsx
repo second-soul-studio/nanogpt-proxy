@@ -17,7 +17,7 @@ const data = [
   },
   {
     link: '/admin/apikey',
-    label: 'menu.items.apiKeys',
+    label: 'menu.items.apiKey',
     roles: ['ADMIN', 'USER'],
     icon: IconKey,
   },

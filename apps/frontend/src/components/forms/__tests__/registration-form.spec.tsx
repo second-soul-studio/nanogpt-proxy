@@ -1,19 +1,21 @@
-import '@testing-library/jest-dom/vitest';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { fireEvent, screen } from '@testing-library/react';
 import i18nTest from '../../../i18ntest.ts';
+import '@testing-library/jest-dom/vitest';
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
+import { fireEvent, screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../__tests__/utilities/test.utilities.tsx';
 import RegistrationForm from '../registration-form.tsx';
+import type { RegisterRequestDto } from '../../../dtos/register-request.dto.ts';
+import type { RegisterResponseDto } from '../../../dtos/register-response.dto.ts';
 
-const navigateMock = vi.fn();
-const setAuthCookiesMock = vi.fn();
-const mutateSpy = vi.fn();
+const navigateMock: Mock = vi.fn();
+const setAuthCookiesMock: Mock = vi.fn();
+const mutateSpy: Mock = vi.fn();
 
 let currentIsPending = false;
 let currentIsSuccess = false;
-let currentData: any = undefined;
-let currentError: any = undefined;
-let currentOnSuccessPayload: any = undefined;
+let currentData: RegisterResponseDto | null = null;
+let currentError: Error | null = null;
+let currentOnSuccessPayload: RegisterResponseDto | null = null;
 
 vi.mock('react-router', async () => {
   const actual = await vi.importActual<typeof import('react-router')>('react-router');
@@ -23,11 +25,21 @@ vi.mock('react-router', async () => {
   };
 });
 
+type UseRegisterMockReturn = {
+  mutate: (values: RegisterRequestDto) => void;
+  isPending: boolean;
+  isSuccess: boolean;
+  data: RegisterResponseDto | null;
+  error: Error | null;
+};
+
 vi.mock('../../../hooks/useRegister.ts', () => ({
-  useRegister: (opts: { onSuccess: (result: any) => void }) => ({
-    mutate: (values: any) => {
+  useRegister: (opts?: {
+    onSuccess?: (result: RegisterResponseDto) => void;
+  }): UseRegisterMockReturn => ({
+    mutate: (values: RegisterRequestDto) => {
       mutateSpy(values);
-      if (currentOnSuccessPayload) {
+      if (currentOnSuccessPayload && opts?.onSuccess) {
         opts.onSuccess(currentOnSuccessPayload);
       }
     },
@@ -45,7 +57,9 @@ vi.mock('../../../utilities/cookies.utilities.ts', async () => {
 
   return {
     ...actual,
-    setAuthCookies: (...args: any[]) => setAuthCookiesMock(...args),
+    setAuthCookies: (...args: Parameters<(typeof actual)['setAuthCookies']>) => {
+      setAuthCookiesMock(...args);
+    },
   };
 });
 
@@ -56,7 +70,6 @@ vi.mock('../../../utilities/password-validation.utilities.ts', () => ({
   }),
 }));
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 describe('<RegistrationForm />', () => {
   beforeEach(async () => {
     await i18nTest.changeLanguage('en');
@@ -69,9 +82,9 @@ describe('<RegistrationForm />', () => {
 
     currentIsPending = false;
     currentIsSuccess = false;
-    currentData = undefined;
-    currentError = undefined;
-    currentOnSuccessPayload = undefined;
+    currentData = null;
+    currentError = null;
+    currentOnSuccessPayload = null;
   });
 
   it('renders first step with email input and navigation buttons', () => {
@@ -146,7 +159,7 @@ describe('<RegistrationForm />', () => {
     expect(mutateSpy).toHaveBeenCalledWith({
       email: 'user@example.com',
       password: 'Abcdef1!',
-    });
+    } satisfies RegisterRequestDto);
   });
 
   it('navigates to /admin and sets auth cookies when registration succeeds with tokens (no pendingReview)', () => {
@@ -157,7 +170,7 @@ describe('<RegistrationForm />', () => {
       refreshToken: 'refresh-token',
       email: 'user@example.com',
       role: 'ADMIN',
-    };
+    } as RegisterResponseDto;
     currentIsSuccess = true;
     currentData = currentOnSuccessPayload;
 
@@ -192,7 +205,7 @@ describe('<RegistrationForm />', () => {
       pendingReview: true,
       email: 'user@example.com',
       role: 'USER',
-    };
+    } as RegisterResponseDto;
     currentIsSuccess = true;
     currentData = currentOnSuccessPayload;
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { AxiosInstance } from 'axios';
+import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 
 vi.mock('../../utilities/cookies.utilities', () => ({
@@ -11,28 +11,56 @@ vi.mock('../../utilities/cookies.utilities', () => ({
 
 type Mock = ReturnType<typeof vi.fn>;
 
+type RequestConfigLike = {
+  headers?: Record<string, unknown>;
+};
+
+type RequestHandler = (config: RequestConfigLike) => RequestConfigLike;
+
+type ResponseRejectedHandler = (error: unknown) => Promise<unknown>;
+
+type AxiosInterceptorsIntrospection = {
+  interceptors: {
+    request: {
+      handlers: Array<{ fulfilled?: RequestHandler }>;
+    };
+    response: {
+      handlers: Array<{ rejected?: ResponseRejectedHandler }>;
+    };
+  };
+};
+
+type AxiosDefaultsWithAdapter = typeof axios.defaults & {
+  adapter?: (config: InternalAxiosRequestConfig) => Promise<AxiosResponse>;
+};
+
+type AxiosLikeError = {
+  response?: { status: number };
+  config?: Record<string, unknown>;
+};
+
 let api: AxiosInstance;
 let getAccessTokenMock: Mock;
 let getRefreshTokenMock: Mock;
 let setAuthCookiesMock: Mock;
 let clearAuthCookiesMock: Mock;
 
-function getRequestInterceptor(apiInstance: AxiosInstance) {
-  const anyApi = apiInstance as any;
-  const handler = anyApi.interceptors.request.handlers[0]?.fulfilled;
+function getRequestInterceptor(apiInstance: AxiosInstance): RequestHandler {
+  const introspected = apiInstance as unknown as AxiosInterceptorsIntrospection;
+  const handler = introspected.interceptors.request.handlers[0]?.fulfilled;
   if (!handler) {
     throw new Error('No request interceptor found');
   }
-  return handler as (config: any) => any;
+  return handler;
 }
 
-function getResponseRejectedInterceptor(apiInstance: AxiosInstance) {
-  const anyApi = apiInstance as any;
-  const handler = anyApi.interceptors.response.handlers[0]?.rejected;
+function getResponseRejectedInterceptor(apiInstance: AxiosInstance): ResponseRejectedHandler {
+  const introspected = apiInstance as unknown as AxiosInterceptorsIntrospection;
+  const handler = introspected.interceptors.response.handlers[0]?.rejected;
   if (!handler) {
     throw new Error('No response rejected interceptor found');
   }
-  return handler as (error: any) => Promise<any>;
+  return handler;
 }
 
 beforeEach(async () => {
@@ -48,16 +76,17 @@ beforeEach(async () => {
   setAuthCookiesMock = cookies.setAuthCookies as unknown as Mock;
   clearAuthCookiesMock = cookies.clearAuthCookies as unknown as Mock;
 
-  (api.defaults as any).adapter = vi.fn(async (config: any) => ({
-    data: { ok: true },
-    status: 200,
-    statusText: 'OK',
-    headers: {},
-    config,
-  }));
+  (api.defaults as AxiosDefaultsWithAdapter).adapter = vi.fn(
+    async (config: InternalAxiosRequestConfig): Promise<AxiosResponse> => ({
+      data: { ok: true },
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config,
+    }),
+  );
 });
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 describe('axios api client', () => {
   it('adds Authorization header when access token exists', () => {
     /* Arrange */
@@ -69,7 +98,7 @@ describe('axios api client', () => {
     const config = requestInterceptor({ headers: {} });
 
     /* Assert */
-    expect(config.headers.Authorization).toBe('Bearer access-123');
+    expect(config.headers?.Authorization).toBe('Bearer access-123');
   });
 
   it('does not add Authorization header when access token is missing', () => {
@@ -82,15 +111,15 @@ describe('axios api client', () => {
     const config = requestInterceptor({ headers: {} });
 
     /* Assert */
-    expect(config.headers.Authorization).toBeUndefined();
+    expect(config.headers?.Authorization).toBeUndefined();
   });
 
   it('response interceptor – returns rejected promise when there is no response', async () => {
     /* Act */
     const responseRejected = getResponseRejectedInterceptor(api);
 
-    const error: any = new Error('Network error');
-    error.config = {};
+    type NetworkError = Error & { config?: Record<string, unknown> };
+    const error: NetworkError = Object.assign(new Error('Network error'), { config: {} });
 
     /* Assert */
     await expect(responseRejected(error)).rejects.toBe(error);
@@ -102,13 +131,13 @@ describe('axios api client', () => {
 
     getRefreshTokenMock.mockReturnValue('some-refresh');
 
-    const error = {
+    const error: AxiosLikeError = {
       response: { status: 403 },
       config: {},
     };
 
     /* Assert */
-    await expect(responseRejected(error as any)).rejects.toEqual(error);
+    await expect(responseRejected(error)).rejects.toEqual(error);
   });
 
   it('response interceptor – rejects when no refresh token is available (pre-check)', async () => {
@@ -117,13 +146,13 @@ describe('axios api client', () => {
 
     getRefreshTokenMock.mockReturnValue(null);
 
-    const error = {
+    const error: AxiosLikeError = {
       response: { status: 401 },
       config: {},
     };
 
     /* Assert */
-    await expect(responseRejected(error as any)).rejects.toEqual(error);
+    await expect(responseRejected(error)).rejects.toEqual(error);
     expect(clearAuthCookiesMock).not.toHaveBeenCalled();
   });
 
@@ -138,18 +167,23 @@ describe('axios api client', () => {
         accessToken: 'new-access',
         refreshToken: 'new-refresh',
       },
-    } as any);
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {},
+    } as AxiosResponse<{ accessToken: string; refreshToken: string }>);
 
-    const error = {
+    const error: AxiosLikeError = {
       response: { status: 401 },
       config: { url: '/protected', headers: {} },
     };
 
     /* Act */
-    const result = await responseRejected(error as any);
+    const resultUnknown = await responseRejected(error);
+    const result = resultUnknown as AxiosResponse<{ ok: boolean }>;
 
     /* Assert */
-    const adapterMock = (api.defaults as any).adapter as Mock;
+    const adapterMock = (api.defaults as AxiosDefaultsWithAdapter).adapter as Mock;
     expect(adapterMock).toHaveBeenCalledTimes(1);
 
     expect(postSpy).toHaveBeenCalledWith(expect.stringMatching(/\/v1\/auth\/refresh\/$/), null, {
@@ -176,15 +210,14 @@ describe('axios api client', () => {
 
     vi.spyOn(axios, 'post').mockRejectedValue(new Error('Refresh failed'));
 
-    const error = {
+    const error: AxiosLikeError = {
       response: { status: 401 },
       config: {},
     };
 
-    /* Act */
-    await expect(responseRejected(error as any)).rejects.toThrow('Refresh failed');
+    /* Act & Assert */
+    await expect(responseRejected(error)).rejects.toThrow('Refresh failed');
 
-    /* Assert */
     expect(clearAuthCookiesMock).toHaveBeenCalledTimes(1);
   });
 
@@ -198,36 +231,42 @@ describe('axios api client', () => {
 
     vi.spyOn(axios, 'post').mockImplementation(
       () =>
-        new Promise((resolve) => {
+        new Promise<AxiosResponse<{ accessToken: string; refreshToken: string }>>((resolve) => {
           resolveRefresh = () =>
             resolve({
               data: {
                 accessToken: 'new-access',
                 refreshToken: 'new-refresh',
               },
-            } as any);
+              status: 200,
+              statusText: 'OK',
+              headers: {},
+              config: {} as InternalAxiosRequestConfig,
+            });
         }),
     );
 
-    const error1 = {
+    const error1: AxiosLikeError = {
       response: { status: 401 },
       config: { url: '/first', headers: {} },
     };
-    const error2 = {
+    const error2: AxiosLikeError = {
       response: { status: 401 },
       config: { url: '/second', headers: {} },
     };
 
-    const p1 = responseRejected(error1 as any);
-    const p2 = responseRejected(error2 as any);
+    const p1 = responseRejected(error1);
+    const p2 = responseRejected(error2);
 
-    resolveRefresh && resolveRefresh();
+    if (resolveRefresh) {
+      resolveRefresh();
+    }
 
     /* Act */
     await Promise.all([p1, p2]);
 
     /* Assert */
-    const adapterMock = (api.defaults as any).adapter as Mock;
+    const adapterMock = (api.defaults as AxiosDefaultsWithAdapter).adapter as Mock;
     expect(adapterMock).toHaveBeenCalledTimes(2);
   });
 });

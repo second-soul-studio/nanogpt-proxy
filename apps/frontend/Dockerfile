@@ -8,6 +8,7 @@ COPY apps ./apps
 COPY packages ./packages
 
 RUN corepack enable && pnpm install --frozen-lockfile
+RUN pnpm --filter core build
 RUN pnpm --filter frontend build
 
 FROM nginx:1.27-alpine AS runner

@@ -1,5 +1,3 @@
-// src/utilities/register-error-mapping.utilities.ts
-
 export type RegisterErrorMessageKey =
   | 'register.errors.conflict'
   | 'register.errors.forbidden'

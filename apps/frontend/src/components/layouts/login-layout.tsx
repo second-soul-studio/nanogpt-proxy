@@ -7,7 +7,7 @@ function LoginLayout() {
   return (
     <AppShell padding="md" header={{ height: 60 }} footer={{ height: { base: 120, sm: 100 } }}>
       <AppShell.Header>
-        <TopHeader />
+        <TopHeader displayBurgerButton={false} />
       </AppShell.Header>
       <AppShell.Main>
         <Container size="md">

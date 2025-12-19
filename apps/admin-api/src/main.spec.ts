@@ -105,12 +105,12 @@ describe('bootstrap', () => {
       cb: (err: Error | null, allow?: boolean) => void,
     ) => void;
 
-    // Authorized origin (present in CORS_ORIGINS)
+    /* Authorized origin (present in CORS_ORIGINS) */
     const cbFoo = jest.fn();
     originFn('http://foo.com', cbFoo);
     expect(cbFoo).toHaveBeenCalledWith(null, true);
 
-    // Unauthorized origin
+    /* Unauthorized origin */
     const cbLocalhost = jest.fn();
     originFn('http://localhost:5173', cbLocalhost);
     expect(cbLocalhost.mock.calls[0][0]).toBeInstanceOf(Error);

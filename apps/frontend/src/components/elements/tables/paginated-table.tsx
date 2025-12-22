@@ -51,12 +51,16 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
   }, [page, limit, sortBy, sortDir]);
 
   const allSelectedOnPage = useMemo(() => {
-    if (!rows.length) return false;
+    if (!rows.length) {
+      return false;
+    }
     return rows.every((row: T) => selectedIds.has(getRowId(row)));
   }, [rows, selectedIds, getRowId]);
 
   const someSelectedOnPage = useMemo(() => {
-    if (!rows.length) return false;
+    if (!rows.length) {
+      return false;
+    }
     const selectedCount = rows.filter((row: T) => selectedIds.has(getRowId(row))).length;
     return selectedCount > 0 && selectedCount < rows.length;
   }, [rows, selectedIds, getRowId]);
@@ -88,7 +92,9 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
   );
 
   const handleSortClick = (column: ColumnDef<T>) => {
-    if (!column.sortable) return;
+    if (!column.sortable) {
+      return;
+    }
     const key = column.key as string;
     if (sortBy !== key) {
       setSortBy(key);
@@ -103,7 +109,9 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
   };
 
   const renderSortIcon = (column: ColumnDef<T>) => {
-    if (!column.sortable) return null;
+    if (!column.sortable) {
+      return null;
+    }
     if (sortBy !== column.key) {
       return <IconArrowsSort style={{ width: rem(14), height: rem(14) }} />;
     }
@@ -122,7 +130,7 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
         <Table striped highlightOnHover withTableBorder withColumnBorders>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>
+              <Table.Th w={10}>
                 <Checkbox
                   aria-label="Select all rows on this page"
                   checked={allSelectedOnPage}
@@ -159,7 +167,7 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
                 </Table.Th>
               ))}
 
-              {renderActions && <Table.Th style={{ width: '1%' }}>Actions</Table.Th>}
+              {renderActions && <Table.Th style={{ width: '126px' }}>Actions</Table.Th>}
             </Table.Tr>
           </Table.Thead>
 

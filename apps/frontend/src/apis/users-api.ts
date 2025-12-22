@@ -1,6 +1,6 @@
-import axios from 'axios';
 import type { PageDto, PaginationParams } from '../components/elements/tables/pagination-types.ts';
 import type { UsersDto } from '../dtos/users.dto.ts';
+import { api } from './axios-client.ts';
 
 export async function fetchUsersPage(
   baseUrl: string,
@@ -9,7 +9,7 @@ export async function fetchUsersPage(
 ): Promise<PageDto<UsersDto>> {
   const url = `${baseUrl}/v1/users`;
 
-  const response = await axios.get<PageDto<UsersDto>>(url, {
+  const response = await api.get<PageDto<UsersDto>>(url, {
     params: {
       page: params.page,
       limit: params.limit,

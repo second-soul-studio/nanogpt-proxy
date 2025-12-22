@@ -1,15 +1,17 @@
-import { Badge, Button, Group, Text } from '@mantine/core';
+import { Badge, Button, Group, Text, UnstyledButton } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import type { UsersDto } from '../../dtos/users.dto';
-import type { ColumnDef } from '../elements/tables/column-def';
 import { PaginatedTable } from '../elements/tables/paginated-table';
-import type { PaginationParams, PageDto } from '../elements/tables/pagination-types';
-import type { UsePageQuery } from '../../hooks/usePageQuery';
 import { fetchUsersPage } from '../../apis/users-api';
 import { getAccessToken } from '../../utilities/cookies.utilities.ts';
 import { API_BASE_URL } from '../../apis/api.ts';
+import type { PaginationParams, PageDto } from '../elements/tables/pagination-types';
+import type { UsePageQuery } from '../../hooks/usePageQuery';
+import type { UsersDto } from '../../dtos/users.dto';
+import type { ColumnDef } from '../elements/tables/column-def';
+import { IconEdit, IconTrash, IconUserCheck, IconUserX } from '@tabler/icons-react';
 
 type UsersTableProps = {
+  onApproveDisapproveUser?: (user: UsersDto) => void;
   onEditUser?: (user: UsersDto) => void;
   onDeleteUser?: (user: UsersDto) => void;
   onBulkDisable?: (users: UsersDto[]) => void;
@@ -17,7 +19,7 @@ type UsersTableProps = {
 };
 
 function UsersTable(props: UsersTableProps) {
-  const { onEditUser, onDeleteUser, onBulkDisable, onBulkEnable } = props;
+  const { onApproveDisapproveUser, onEditUser, onDeleteUser, onBulkDisable, onBulkEnable } = props;
 
   const columns: ColumnDef<UsersDto>[] = [
     {
@@ -28,6 +30,7 @@ function UsersTable(props: UsersTableProps) {
     {
       key: 'role',
       header: 'Role',
+      width: 90,
       sortable: true,
       render: (row) => (
         <Badge color={row.role === 'ADMIN' ? 'red' : 'blue'} variant="light">
@@ -38,6 +41,7 @@ function UsersTable(props: UsersTableProps) {
     {
       key: 'enabled',
       header: 'Enabled',
+      width: 100,
       sortable: true,
       render: (row) => (
         <Badge color={row.enabled ? 'green' : 'gray'} variant={row.enabled ? 'filled' : 'outline'}>
@@ -49,6 +53,7 @@ function UsersTable(props: UsersTableProps) {
       key: 'api_key',
       header: 'API key',
       sortable: false,
+      width: 100,
       render: (row) =>
         row.api_key ? (
           <Text size="sm">••••••••••••</Text>
@@ -65,7 +70,6 @@ function UsersTable(props: UsersTableProps) {
       queryKey: ['users', params],
       queryFn: () => {
         const token = getAccessToken();
-
         if (!token) {
           throw new Error('Missing access token');
         }
@@ -79,20 +83,25 @@ function UsersTable(props: UsersTableProps) {
     <PaginatedTable<UsersDto>
       getRowId={(u) => u.email}
       columns={columns}
-      initialLimit={5}
+      initialLimit={10}
       usePageQuery={useUsersPage}
       renderActions={(row) => (
-        <Group gap="xs">
+        <Group>
+          {onApproveDisapproveUser && (
+            <UnstyledButton size="xs" onClick={() => onApproveDisapproveUser(row)}>
+              {row.enabled ? <IconUserX /> : <IconUserCheck />}
+            </UnstyledButton>
+          )}
           {onEditUser && (
-            <Button size="xs" variant="light" color="blue" onClick={() => onEditUser(row)}>
-              Edit
-            </Button>
+            <UnstyledButton size="xs" onClick={() => onEditUser(row)}>
+              <IconEdit />
+            </UnstyledButton>
           )}
 
           {onDeleteUser && (
-            <Button size="xs" variant="light" color="red" onClick={() => onDeleteUser(row)}>
-              Delete
-            </Button>
+            <UnstyledButton size="xs" onClick={() => onDeleteUser(row)}>
+              <IconTrash />
+            </UnstyledButton>
           )}
         </Group>
       )}

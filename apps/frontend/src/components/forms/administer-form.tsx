@@ -3,10 +3,16 @@ import { Group, Title } from '@mantine/core';
 import { IconUsersPlus } from '@tabler/icons-react';
 import UsersTable from '../customs/users-table.tsx';
 import { useUser } from '../../hooks/useUser.ts';
+import { useDisclosure } from '@mantine/hooks';
+import { UserEditModal } from './modals/user-edit-modal.tsx';
+import type { UsersDto } from '../../dtos/users.dto.ts';
+import { useState } from 'react';
 
 function AdministerForm() {
   const { t } = useTranslation();
-  const { toggleEnabled } = useUser();
+  const { bulkDisable, bulkEnable, toggleEnabled } = useUser();
+  const [editUserOpened, { open: openEditUser, close: closeEditUser }] = useDisclosure(false);
+  const [editingUser, setEditingUser] = useState<UsersDto | null>(null);
 
   return (
     <>
@@ -20,20 +26,28 @@ function AdministerForm() {
           toggleEnabled(user);
         }}
         onEditUser={(user) => {
-          console.info('Edit ' + user);
-          // ouvrir un drawer / modal avec le user
+          console.info('Edit', user);
+          setEditingUser(user);
+          openEditUser();
         }}
         onDeleteUser={(user) => {
           console.info('Delete ' + user);
           // ouvrir un confirm, puis call delete endpoint
         }}
         onBulkEnable={(users) => {
-          console.info('Bulk enabled' + users);
-          // call endpoint bulk enable
+          bulkEnable(users);
         }}
         onBulkDisable={(users) => {
-          console.info('Bulk disabled' + users);
-          // call endpoint bulk disable
+          bulkDisable(users);
+        }}
+      />
+
+      <UserEditModal
+        opened={editUserOpened}
+        user={editingUser}
+        onClose={() => {
+          closeEditUser();
+          setEditingUser(null);
         }}
       />
     </>

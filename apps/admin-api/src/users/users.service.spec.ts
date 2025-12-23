@@ -21,6 +21,7 @@ import { toNewUserEntity, toUpdatedUserEntity } from '../mappers/user.mapper';
 import { maskEmail } from '@nanogpt-monorepo/core/dist/utilities/masking.utils';
 import { mockUsers } from '../__tests__/user.dto.mock';
 import { PaginationQueryDto } from '@nanogpt-monorepo/core/dist/pagination/pagination-query.dto';
+import { UsersDto } from '../dtos/users.dto';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -260,9 +261,18 @@ describe('UsersService', () => {
   });
 
   describe('listUsers', () => {
+    const asUserEntities = (dtos: UsersDto[]): Omit<UserEntity, 'password'>[] =>
+      dtos.map((u) => ({
+        email: u.email,
+        role: u.role,
+        enabled: u.enabled,
+        api_key: '',
+      }));
+
     it('should return all users in a single page with default pagination', async () => {
       /* Arrange */
-      repo.getAllUsers.mockResolvedValue(mockUsers);
+      const userEntities = asUserEntities(mockUsers);
+      repo.getAllUsers.mockResolvedValue(userEntities);
 
       const query = {} as PaginationQueryDto;
 
@@ -295,7 +305,8 @@ describe('UsersService', () => {
 
     it('should return the correct slice for page 2 with limit 3', async () => {
       /* Arrange */
-      repo.getAllUsers.mockResolvedValue(mockUsers);
+      const userEntities = asUserEntities(mockUsers);
+      repo.getAllUsers.mockResolvedValue(userEntities);
 
       const query: PaginationQueryDto = {
         page: 2,
@@ -323,7 +334,8 @@ describe('UsersService', () => {
 
     it('should fallback to defaults when page/limit are invalid', async () => {
       /* Arrange */
-      repo.getAllUsers.mockResolvedValue(mockUsers);
+      const userEntities = asUserEntities(mockUsers);
+      repo.getAllUsers.mockResolvedValue(userEntities);
 
       const query: any = {
         page: 0,

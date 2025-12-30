@@ -4,6 +4,7 @@ import { DynamicFormModal } from './dynamic-form-modal';
 import type { UserRole } from '../../../dtos/users.dto';
 import type { FieldConfig } from '../fields/field-config';
 import { buildInitialValues, buildUserFields } from './user-form-config';
+import { useTranslation } from 'react-i18next';
 
 export type UserCreateFormValues = {
   enabled: boolean;
@@ -21,10 +22,14 @@ type UserCreateModalProps = {
 export function UserCreateModal(props: UserCreateModalProps) {
   const { opened, onClose } = props;
   const { createUserAsync, isCreating } = useUser();
+  const { t } = useTranslation();
 
   const initialValues = useMemo(() => buildInitialValues(null, 'create'), []);
 
-  const fields: FieldConfig<UserCreateFormValues>[] = useMemo(() => buildUserFields('create'), []);
+  const fields: FieldConfig<UserCreateFormValues>[] = useMemo(
+    () => buildUserFields('create', t),
+    [],
+  );
 
   const handleSubmit = async (values: UserCreateFormValues) => {
     await createUserAsync({

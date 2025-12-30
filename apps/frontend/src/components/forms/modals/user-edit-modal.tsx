@@ -4,6 +4,7 @@ import { DynamicFormModal } from './dynamic-form-modal';
 import type { UsersDto, UserRole } from '../../../dtos/users.dto';
 import type { FieldConfig } from '../fields/field-config';
 import { buildInitialValues, buildUserFields } from './user-form-config';
+import { useTranslation } from 'react-i18next';
 
 export type UserEditFormValues = {
   enabled: boolean;
@@ -22,10 +23,11 @@ type UserEditModalProps = {
 export function UserEditModal(props: UserEditModalProps) {
   const { opened, user, onClose } = props;
   const { updateUserAsync, isPending } = useUser();
+  const { t } = useTranslation();
 
   const initialValues = useMemo(() => buildInitialValues(user, 'edit'), [user]);
 
-  const fields: FieldConfig<UserEditFormValues>[] = useMemo(() => buildUserFields('edit'), []);
+  const fields: FieldConfig<UserEditFormValues>[] = useMemo(() => buildUserFields('edit', t), []);
 
   const handleSubmit = async (values: UserEditFormValues) => {
     if (!user) return;

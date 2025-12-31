@@ -139,6 +139,14 @@
       },
       "role": {
         "label": "Rôle"
+      },
+      "title": {
+        "create": {
+          "label": "Créer un utilisateur"
+        },
+        "edit": {
+          "label": "Modifier l’utilisateur : {{email}}"
+        }
       }
     }
   },

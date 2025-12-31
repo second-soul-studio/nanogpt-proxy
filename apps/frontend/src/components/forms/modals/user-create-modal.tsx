@@ -47,7 +47,7 @@ export function UserCreateModal(props: UserCreateModalProps) {
     <DynamicFormModal<UserCreateFormValues>
       key={opened ? 'create-open' : 'create-closed'}
       opened={opened}
-      title="Create user"
+      title={t('modals.createUpdateUser.title.create.label')}
       initialValues={initialValues}
       fields={fields}
       loading={isCreating}

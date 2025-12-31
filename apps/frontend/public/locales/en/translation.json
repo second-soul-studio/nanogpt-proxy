@@ -3,6 +3,9 @@
     "back": {
       "label": "Back"
     },
+    "cancel": {
+      "label": "Cancel"
+    },
     "createAccount": {
       "label": "Create account"
     },
@@ -11,6 +14,9 @@
     },
     "next": {
       "label": "Next"
+    },
+    "save": {
+      "label": "Save"
     }
   },
   "input": {
@@ -139,6 +145,14 @@
       },
       "role": {
         "label": "Role"
+      },
+      "title": {
+        "create": {
+          "label": "Create user"
+        },
+        "edit": {
+          "label": "Edit user: {{email}}"
+        }
       }
     }
   },

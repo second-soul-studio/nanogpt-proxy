@@ -47,7 +47,11 @@ export function UserEditModal(props: UserEditModalProps) {
     <DynamicFormModal<UserEditFormValues>
       key={user?.email ?? 'edit-new'}
       opened={opened}
-      title={user ? `Edit user: ${user.email}` : 'Edit user'}
+      title={
+        user
+          ? t('modals.createUpdateUser.title.edit.label', { email: user.email })
+          : t('modals.createUpdateUser.title.edit.label')
+      }
       initialValues={initialValues}
       fields={fields}
       loading={isPending}

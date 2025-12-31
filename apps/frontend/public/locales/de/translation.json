@@ -123,6 +123,35 @@
       "load": "Konfiguration konnte nicht geladen werden."
     }
   },
+  "modals": {
+    "createUpdateUser": {
+      "apiKey": {
+        "label": "API-Schlüssel",
+        "placeholder": "Optionale UUID v4"
+      },
+      "email": {
+        "label": "E-Mail"
+      },
+      "enabled": {
+        "label": "Aktiv"
+      },
+      "password": {
+        "label": "Passwort",
+        "placeholder": "Anfangspasswort festlegen"
+      },
+      "role": {
+        "label": "Rolle"
+      },
+      "title": {
+        "create": {
+          "label": "Benutzer erstellen"
+        },
+        "edit": {
+          "label": "Benutzer bearbeiten: {{email}}"
+        }
+      }
+    }
+  },
   "tables": {
     "administer": {
       "buttons": {
@@ -157,5 +186,4 @@
       }
     }
   }
-
 }

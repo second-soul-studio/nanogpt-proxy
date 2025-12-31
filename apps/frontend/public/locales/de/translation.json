@@ -3,6 +3,9 @@
     "back": {
       "label": "Zurück"
     },
+    "cancel": {
+      "label": "Abbrechen"
+    },
     "createAccount": {
       "label": "Konto erstellen"
     },
@@ -11,6 +14,9 @@
     },
     "next": {
       "label": "Weiter"
+    },
+    "save": {
+      "label": "Speichern"
     }
   },
   "input": {
@@ -137,7 +143,8 @@
       },
       "password": {
         "label": "Passwort",
-        "placeholder": "Anfangspasswort festlegen"
+        "placeholder": "Anfangspasswort festlegen",
+        "placeholderEdit": "Leer lassen, um das aktuelle Passwort zu behalten"
       },
       "role": {
         "label": "Rolle"
@@ -157,7 +164,11 @@
       "buttons": {
         "enableSelected": "Ausgewählte aktivieren",
         "disableSelected": "Ausgewählte deaktivieren",
-        "addUser": "Benutzer hinzufügen"
+        "addUser": "Benutzer hinzufügen",
+        "editUser": "Benutzer bearbeiten",
+        "enableUser": "Benutzer aktivieren",
+        "disableUser": "Benutzer deaktivieren",
+        "deleteUser": "Benutzer löschen"
       },
       "columns": {
         "email": "E-Mail",

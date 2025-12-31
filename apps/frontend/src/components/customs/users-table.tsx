@@ -125,7 +125,11 @@ function UsersTable(props: UsersTableProps) {
                 <Tooltip
                   arrowOffset={50}
                   arrowSize={8}
-                  label={row.enabled ? 'Disable user' : 'Enable user'}
+                  label={
+                    row.enabled
+                      ? t('tables.administer.buttons.disableUser')
+                      : t('tables.administer.buttons.enableUser')
+                  }
                   withArrow
                   position="bottom"
                 >
@@ -138,7 +142,7 @@ function UsersTable(props: UsersTableProps) {
                 <Tooltip
                   arrowOffset={50}
                   arrowSize={8}
-                  label="Edit user"
+                  label={t('tables.administer.buttons.editUser')}
                   withArrow
                   position="bottom"
                 >
@@ -160,7 +164,7 @@ function UsersTable(props: UsersTableProps) {
                 <Tooltip
                   arrowOffset={50}
                   arrowSize={8}
-                  label="Delete user"
+                  label={t('tables.administer.buttons.deleteUser')}
                   withArrow
                   position="bottom"
                 >

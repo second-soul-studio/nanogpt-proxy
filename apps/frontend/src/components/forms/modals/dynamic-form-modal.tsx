@@ -9,6 +9,7 @@ import {
   Button,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useTranslation } from 'react-i18next';
 import type { FieldConfig } from '../fields/field-config.ts';
 
 export type DynamicFormModalProps<T extends Record<string, unknown>> = {
@@ -25,6 +26,7 @@ export function DynamicFormModal<T extends Record<string, unknown>>(
   props: DynamicFormModalProps<T>,
 ) {
   const { opened, title, initialValues, fields, loading, onSubmit, onCancel } = props;
+  const { t } = useTranslation();
 
   const form = useForm<T>({
     initialValues,
@@ -111,10 +113,10 @@ export function DynamicFormModal<T extends Record<string, unknown>>(
 
           <Group justify="flex-end" mt="md">
             <Button variant="outline" onClick={onCancel}>
-              Cancel
+              {t('button.cancel.label')}
             </Button>
             <Button type="submit" loading={loading}>
-              Save
+              {t('button.save.label')}
             </Button>
           </Group>
         </Stack>

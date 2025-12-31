@@ -141,7 +141,8 @@
       },
       "password": {
         "label": "Password",
-        "placeholder": "Set an initial password"
+        "placeholder": "Set an initial password",
+        "placeholderEdit": "Leave empty to keep current password"
       },
       "role": {
         "label": "Role"
@@ -161,7 +162,11 @@
       "buttons": {
         "enableSelected": "Enable selected",
         "disableSelected": "Disable selected",
-        "addUser": "Add user"
+        "addUser": "Add user",
+        "editUser": "Edit user",
+        "enableUser": "Enable user",
+        "disableUser" : "Disable user",
+        "deleteUser": "Delete user"
       },
       "columns": {
         "email": "Email",

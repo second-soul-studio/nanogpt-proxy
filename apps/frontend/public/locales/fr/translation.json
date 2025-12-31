@@ -3,6 +3,9 @@
     "back": {
       "label": "Retour"
     },
+    "cancel": {
+      "label": "Annuler"
+    },
     "createAccount": {
       "label": "Créer un compte"
     },
@@ -11,6 +14,9 @@
     },
     "next": {
       "label": "Suivant"
+    },
+    "save": {
+      "label": "Enregistrer"
     }
   },
   "input": {
@@ -135,7 +141,8 @@
       },
       "password": {
         "label": "Mot de passe",
-        "placeholder": "Définir un mot de passe initial"
+        "placeholder": "Définir un mot de passe initial",
+        "placeholderEdit": "Laisser vide pour conserver le mot de passe actuel"
       },
       "role": {
         "label": "Rôle"
@@ -155,7 +162,11 @@
       "buttons": {
         "enableSelected": "Activer les éléments sélectionnés",
         "disableSelected": "Désactiver les éléments sélectionnés",
-        "addUser": "Ajout utilisateur"
+        "addUser": "Ajout utilisateur",
+        "editUser": "Modifier utilisateur",
+        "enableUser": "Activer utilisateur",
+        "disableUser": "Désactiver utilisateur",
+        "deleteUser": "Supprimer utilisateur"
       },
       "columns": {
         "email": "Courriel",
@@ -184,5 +195,4 @@
       }
     }
   }
-
 }

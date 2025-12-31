@@ -50,7 +50,6 @@ function createWrapper(queryClient: QueryClient) {
   };
 }
 
-// Petit helper pour un PageDto<User>
 function makePage(users: UsersDto[]): PageDto<UsersDto> {
   return {
     data: users,
@@ -171,7 +170,7 @@ describe('useUser hook', () => {
     /* Assert */
     expect(apiMock.put).toHaveBeenCalledTimes(1);
     const [, payload] = apiMock.put.mock.calls[0];
-    expect((payload as any).data ?? payload).toBeDefined();
+    expect((payload as PageDto<UsersDto>).data ?? payload).toBeDefined();
 
     expect(payload).toEqual(
       expect.objectContaining({
@@ -251,7 +250,7 @@ describe('useUser hook', () => {
         expect.objectContaining({ email: 'user2@example.com', enabled: true }),
       ]),
     );
-    expect((payload as any[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
+    expect((payload as UsersDto[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
 
     await waitFor(() => {
       const cached = queryClient.getQueryData<PageDto<UsersDto>>(key);
@@ -302,7 +301,7 @@ describe('useUser hook', () => {
         expect.objectContaining({ email: 'user2@example.com', enabled: false }),
       ]),
     );
-    expect((payload as any[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
+    expect((payload as UsersDto[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
 
     await waitFor(() => {
       const cached = queryClient.getQueryData<PageDto<UsersDto>>(key);

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { api } from '../axios-client.ts';
 import { fetchUsersPage } from '../users-api';
 import type { Mock } from 'vitest';
-import type { PageDto } from '../../components/elements/tables/pagination-types';
+import type { PageDto, PaginationParams } from '../../components/elements/tables/pagination-types';
 import type { UsersDto } from '../../dtos/users.dto';
 
 vi.mock('../axios-client.ts', () => {
@@ -88,7 +88,7 @@ describe('fetchUsersPage', () => {
     const params = {
       page: 1,
       limit: 10,
-    } as any;
+    } as PaginationParams;
 
     const error = new Error('Network error');
     getMock.mockRejectedValue(error);

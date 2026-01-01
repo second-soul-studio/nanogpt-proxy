@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 
 import { useUser } from '../useUser';
-import type { UsersDto, UserRole } from '../../dtos/users.dto';
+import type { UserDto, UserRole } from '../../dtos/userDto.ts';
 import type { PageDto } from '../../components/elements/tables/pagination-types';
 
 vi.mock('../../utilities/cookies.utilities', () => ({
@@ -50,7 +50,7 @@ function createWrapper(queryClient: QueryClient) {
   };
 }
 
-function makePage(users: UsersDto[]): PageDto<UsersDto> {
+function makePage(users: UserDto[]): PageDto<UserDto> {
   return {
     data: users,
     meta: {
@@ -62,7 +62,7 @@ function makePage(users: UsersDto[]): PageDto<UsersDto> {
   };
 }
 
-const makeUser = (overrides?: Partial<UsersDto>): UsersDto => ({
+const makeUser = (overrides?: Partial<UserDto>): UserDto => ({
   email: 'john@example.com',
   enabled: true,
   role: 'USER' as UserRole,
@@ -122,9 +122,9 @@ describe('useUser hook', () => {
     const otherUser = makeUser({ email: 'jane@example.com', enabled: false });
 
     const initialKey = ['users', { page: 1, limit: 10 }];
-    queryClient.setQueryData<PageDto<UsersDto>>(initialKey, makePage([existingUser, otherUser]));
+    queryClient.setQueryData<PageDto<UserDto>>(initialKey, makePage([existingUser, otherUser]));
 
-    const updatedUser: UsersDto = { ...existingUser, enabled: false };
+    const updatedUser: UserDto = { ...existingUser, enabled: false };
 
     apiMock.put.mockResolvedValueOnce({ data: updatedUser });
 
@@ -143,7 +143,7 @@ describe('useUser hook', () => {
     expect(apiMock.put.mock.calls[0][0]).toContain('/v1/users');
 
     await waitFor(() => {
-      const cached = queryClient.getQueryData<PageDto<UsersDto>>(initialKey);
+      const cached = queryClient.getQueryData<PageDto<UserDto>>(initialKey);
       expect(cached).toBeDefined();
       expect(cached!.data.find((u) => u.email === 'john@example.com')!.enabled).toBe(false);
       expect(cached!.data.find((u) => u.email === 'jane@example.com')!.enabled).toBe(false);
@@ -156,7 +156,7 @@ describe('useUser hook', () => {
     const wrapper = createWrapper(queryClient);
 
     const user = makeUser({ email: 'toggle@example.com', enabled: true });
-    const updatedUser: UsersDto = { ...user, enabled: false };
+    const updatedUser: UserDto = { ...user, enabled: false };
 
     apiMock.put.mockResolvedValueOnce({ data: updatedUser });
 
@@ -170,7 +170,7 @@ describe('useUser hook', () => {
     /* Assert */
     expect(apiMock.put).toHaveBeenCalledTimes(1);
     const [, payload] = apiMock.put.mock.calls[0];
-    expect((payload as PageDto<UsersDto>).data ?? payload).toBeDefined();
+    expect((payload as PageDto<UserDto>).data ?? payload).toBeDefined();
 
     expect(payload).toEqual(
       expect.objectContaining({
@@ -189,7 +189,7 @@ describe('useUser hook', () => {
     const user2 = makeUser({ email: 'user2@example.com' });
 
     const key = ['users', { page: 1, limit: 10 }];
-    queryClient.setQueryData<PageDto<UsersDto>>(key, makePage([user1, user2]));
+    queryClient.setQueryData<PageDto<UserDto>>(key, makePage([user1, user2]));
 
     apiMock.delete.mockResolvedValueOnce({});
 
@@ -205,7 +205,7 @@ describe('useUser hook', () => {
     expect(apiMock.delete.mock.calls[0][0]).toContain('/v1/users');
 
     await waitFor(() => {
-      const cached = queryClient.getQueryData<PageDto<UsersDto>>(key);
+      const cached = queryClient.getQueryData<PageDto<UserDto>>(key);
       expect(cached).toBeDefined();
       expect(cached!.data.map((u) => u.email)).toEqual(['user1@example.com']);
       expect(cached!.meta.totalItems).toBe(1);
@@ -222,9 +222,9 @@ describe('useUser hook', () => {
     const user3 = makeUser({ email: 'user2@example.com', enabled: false, role: 'USER' });
 
     const key = ['users', { page: 1, limit: 10 }];
-    queryClient.setQueryData<PageDto<UsersDto>>(key, makePage([user1, user2, user3]));
+    queryClient.setQueryData<PageDto<UserDto>>(key, makePage([user1, user2, user3]));
 
-    const serverUpdated: UsersDto[] = [
+    const serverUpdated: UserDto[] = [
       { ...user1, enabled: true },
       { ...user2, enabled: false },
       { ...user3, enabled: true },
@@ -250,10 +250,10 @@ describe('useUser hook', () => {
         expect.objectContaining({ email: 'user2@example.com', enabled: true }),
       ]),
     );
-    expect((payload as UsersDto[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
+    expect((payload as UserDto[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
 
     await waitFor(() => {
-      const cached = queryClient.getQueryData<PageDto<UsersDto>>(key);
+      const cached = queryClient.getQueryData<PageDto<UserDto>>(key);
       expect(cached).toBeDefined();
       const byEmail = new Map(cached!.data.map((u) => [u.email, u]));
 
@@ -273,9 +273,9 @@ describe('useUser hook', () => {
     const user3 = makeUser({ email: 'user2@example.com', enabled: true, role: 'USER' });
 
     const key = ['users', { page: 1, limit: 10 }];
-    queryClient.setQueryData<PageDto<UsersDto>>(key, makePage([user1, user2, user3]));
+    queryClient.setQueryData<PageDto<UserDto>>(key, makePage([user1, user2, user3]));
 
-    const serverUpdated: UsersDto[] = [
+    const serverUpdated: UserDto[] = [
       { ...user1, enabled: false },
       { ...user2, enabled: true },
       { ...user3, enabled: false },
@@ -301,10 +301,10 @@ describe('useUser hook', () => {
         expect.objectContaining({ email: 'user2@example.com', enabled: false }),
       ]),
     );
-    expect((payload as UsersDto[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
+    expect((payload as UserDto[]).find((p) => p.email === 'admin@example.com')).toBeUndefined();
 
     await waitFor(() => {
-      const cached = queryClient.getQueryData<PageDto<UsersDto>>(key);
+      const cached = queryClient.getQueryData<PageDto<UserDto>>(key);
       expect(cached).toBeDefined();
       const byEmail = new Map(cached!.data.map((u) => [u.email, u]));
 

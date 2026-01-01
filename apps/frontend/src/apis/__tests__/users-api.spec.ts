@@ -3,7 +3,7 @@ import { api } from '../axios-client.ts';
 import { fetchUsersPage } from '../users-api';
 import type { Mock } from 'vitest';
 import type { PageDto, PaginationParams } from '../../components/elements/tables/pagination-types';
-import type { UsersDto } from '../../dtos/users.dto';
+import type { UserDto } from '../../dtos/userDto.ts';
 
 vi.mock('../axios-client.ts', () => {
   return {
@@ -33,7 +33,7 @@ describe('fetchUsersPage', () => {
       sortDir: 'ASC',
     } as const;
 
-    const mockPage: PageDto<UsersDto> = {
+    const mockPage: PageDto<UserDto> = {
       data: [
         {
           email: 'user1@example.com',

@@ -1,18 +1,10 @@
 import { useMemo } from 'react';
 import { useUser } from '../../../hooks/useUser';
 import { DynamicFormModal } from './dynamic-form-modal';
-import type { UserRole } from '../../../dtos/users.dto';
+import type { UserDto } from '../../../dtos/userDto.ts';
 import type { FieldConfig } from '../fields/field-config';
 import { buildInitialValues, buildUserFields } from './user-form-config';
 import { useTranslation } from 'react-i18next';
-
-export type UserCreateFormValues = {
-  enabled: boolean;
-  email: string;
-  password: string;
-  api_key: string;
-  role: UserRole;
-};
 
 type UserCreateModalProps = {
   opened: boolean;
@@ -26,12 +18,9 @@ export function UserCreateModal(props: UserCreateModalProps) {
 
   const initialValues = useMemo(() => buildInitialValues(null, 'create'), []);
 
-  const fields: FieldConfig<UserCreateFormValues>[] = useMemo(
-    () => buildUserFields('create', t),
-    [t],
-  );
+  const fields: FieldConfig<UserDto>[] = useMemo(() => buildUserFields('create', t), [t]);
 
-  const handleSubmit = async (values: UserCreateFormValues) => {
+  const handleSubmit = async (values: UserDto) => {
     await createUserAsync({
       email: values.email,
       password: values.password,
@@ -44,7 +33,7 @@ export function UserCreateModal(props: UserCreateModalProps) {
   };
 
   return (
-    <DynamicFormModal<UserCreateFormValues>
+    <DynamicFormModal<UserDto>
       key={opened ? 'create-open' : 'create-closed'}
       opened={opened}
       title={t('modals.createUpdateUser.title.create.label')}

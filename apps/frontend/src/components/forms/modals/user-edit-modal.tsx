@@ -1,22 +1,14 @@
 import { useMemo } from 'react';
 import { useUser } from '../../../hooks/useUser';
 import { DynamicFormModal } from './dynamic-form-modal';
-import type { UsersDto, UserRole } from '../../../dtos/users.dto';
+import type { UserDto } from '../../../dtos/userDto.ts';
 import type { FieldConfig } from '../fields/field-config';
 import { buildInitialValues, buildUserFields } from './user-form-config';
 import { useTranslation } from 'react-i18next';
 
-export type UserEditFormValues = {
-  enabled: boolean;
-  email: string;
-  password: string;
-  api_key: string;
-  role: UserRole;
-};
-
 type UserEditModalProps = {
   opened: boolean;
-  user: UsersDto | null;
+  user: UserDto | null;
   onClose: () => void;
 };
 
@@ -27,9 +19,9 @@ export function UserEditModal(props: UserEditModalProps) {
 
   const initialValues = useMemo(() => buildInitialValues(user, 'edit'), [user]);
 
-  const fields: FieldConfig<UserEditFormValues>[] = useMemo(() => buildUserFields('edit', t), [t]);
+  const fields: FieldConfig<UserDto>[] = useMemo(() => buildUserFields('edit', t), [t]);
 
-  const handleSubmit = async (values: UserEditFormValues) => {
+  const handleSubmit = async (values: UserDto) => {
     if (!user) {
       return;
     }
@@ -46,7 +38,7 @@ export function UserEditModal(props: UserEditModalProps) {
   };
 
   return (
-    <DynamicFormModal<UserEditFormValues>
+    <DynamicFormModal<UserDto>
       key={user?.email ?? 'edit-new'}
       opened={opened}
       title={

@@ -134,7 +134,8 @@
         "placeholder": "Optional UUID v4"
       },
       "email": {
-        "label": "Email"
+        "label": "Email",
+        "requiredError": "Email is required"
       },
       "enabled": {
         "label": "Enabled"

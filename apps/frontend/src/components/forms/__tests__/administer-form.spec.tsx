@@ -5,14 +5,14 @@ import { screen, waitFor } from '@testing-library/react';
 import AdministerForm from '../administer-form';
 import { renderWithProviders } from '../../../__tests__/utilities/test.utilities';
 import i18nTest from '../../../i18ntest';
-import type { UsersDto } from '../../../dtos/users.dto.ts';
+import type { UserDto } from '../../../dtos/userDto.ts';
 import type UsersTable from '../../customs/users-table.tsx';
 
 type UsersTableProps = React.ComponentProps<typeof UsersTable>;
 
 type UserEditModalProps = {
   opened: boolean;
-  user: UsersDto | null;
+  user: UserDto | null;
   onClose: () => void;
 };
 
@@ -107,7 +107,7 @@ describe('<AdministerForm />', () => {
     expect(usersTableProps).toBeDefined();
     expect(typeof usersTableProps!.onApproveDisapproveUser).toBe('function');
 
-    const user: UsersDto = {
+    const user: UserDto = {
       email: 'test@example.com',
       enabled: true,
       role: 'USER',
@@ -132,7 +132,7 @@ describe('<AdministerForm />', () => {
     expect(typeof usersTableProps!.onBulkEnable).toBe('function');
     expect(typeof usersTableProps!.onBulkDisable).toBe('function');
 
-    const users: UsersDto[] = [
+    const users: UserDto[] = [
       { email: 'u1@example.com', enabled: true, role: 'USER', api_key: '', password: 'So-secure!' },
       {
         email: 'u2@example.com',
@@ -163,7 +163,7 @@ describe('<AdministerForm />', () => {
     expect(usersTableProps).toBeDefined();
     expect(typeof usersTableProps!.onDeleteUser).toBe('function');
 
-    const user: UsersDto = {
+    const user: UserDto = {
       email: 'delete-me@example.com',
       enabled: false,
       role: 'USER',
@@ -205,7 +205,7 @@ describe('<AdministerForm />', () => {
     expect(usersTableProps).toBeDefined();
     expect(typeof usersTableProps!.onEditUser).toBe('function');
 
-    const user: UsersDto = {
+    const user: UserDto = {
       email: 'edit-me@example.com',
       enabled: true,
       role: 'USER',

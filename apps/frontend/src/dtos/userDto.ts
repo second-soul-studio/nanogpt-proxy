@@ -1,6 +1,6 @@
 export type UserRole = 'USER' | 'ADMIN';
 
-export type UsersDto = {
+export type UserDto = {
   enabled: boolean;
   email: string;
   password: string;

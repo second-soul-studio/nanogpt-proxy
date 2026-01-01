@@ -8,15 +8,15 @@ import { IconEdit, IconTrash, IconUserCheck, IconUserX } from '@tabler/icons-rea
 import { useTranslation } from 'react-i18next';
 import type { PaginationParams, PageDto } from '../elements/tables/pagination-types';
 import type { UsePageQuery } from '../../hooks/usePageQuery';
-import type { UsersDto } from '../../dtos/users.dto';
+import type { UserDto } from '../../dtos/userDto.ts';
 import type { ColumnDef } from '../elements/tables/column-def';
 
 type UsersTableProps = {
-  onApproveDisapproveUser?: (user: UsersDto) => void;
-  onEditUser?: (user: UsersDto) => void;
-  onDeleteUser?: (user: UsersDto) => void;
-  onBulkDisable?: (users: UsersDto[]) => void;
-  onBulkEnable?: (users: UsersDto[]) => void;
+  onApproveDisapproveUser?: (user: UserDto) => void;
+  onEditUser?: (user: UserDto) => void;
+  onDeleteUser?: (user: UserDto) => void;
+  onBulkDisable?: (users: UserDto[]) => void;
+  onBulkEnable?: (users: UserDto[]) => void;
   onAddUser?: () => void;
 };
 
@@ -31,7 +31,7 @@ function UsersTable(props: UsersTableProps) {
   } = props;
   const { t } = useTranslation();
 
-  const columns: ColumnDef<UsersDto>[] = [
+  const columns: ColumnDef<UserDto>[] = [
     {
       key: 'email',
       header: t('tables.administer.columns.email'),
@@ -82,8 +82,8 @@ function UsersTable(props: UsersTableProps) {
     },
   ];
 
-  const useUsersPage: UsePageQuery<UsersDto> = (params: PaginationParams) =>
-    useQuery<PageDto<UsersDto>, Error>({
+  const useUsersPage: UsePageQuery<UserDto> = (params: PaginationParams) =>
+    useQuery<PageDto<UserDto>, Error>({
       queryKey: ['users', params],
       queryFn: () => {
         const token = getAccessToken();
@@ -105,7 +105,7 @@ function UsersTable(props: UsersTableProps) {
           </Button>
         )}
       </Box>
-      <PaginatedTable<UsersDto>
+      <PaginatedTable<UserDto>
         getRowId={(u) => u.email}
         columns={columns}
         initialLimit={10}

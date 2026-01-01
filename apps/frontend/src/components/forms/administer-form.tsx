@@ -5,7 +5,7 @@ import UsersTable from '../customs/users-table.tsx';
 import { useUser } from '../../hooks/useUser.ts';
 import { useDisclosure } from '@mantine/hooks';
 import { UserEditModal } from './modals/user-edit-modal.tsx';
-import type { UsersDto } from '../../dtos/users.dto.ts';
+import type { UserDto } from '../../dtos/userDto.ts';
 import { useState } from 'react';
 import { UserCreateModal } from './modals/user-create-modal.tsx';
 
@@ -14,7 +14,7 @@ function AdministerForm() {
   const { bulkDisable, bulkEnable, deleteUser, toggleEnabled } = useUser();
   const [editUserOpened, { open: openEditUser, close: closeEditUser }] = useDisclosure(false);
   const [createUserOpened, createUserHandlers] = useDisclosure(false);
-  const [editingUser, setEditingUser] = useState<UsersDto | null>(null);
+  const [editingUser, setEditingUser] = useState<UserDto | null>(null);
 
   return (
     <>

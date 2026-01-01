@@ -21,6 +21,23 @@ type PaginatedTableMockProps<T> = {
   renderBottomBar: (selected: T[]) => React.ReactNode;
 };
 
+type UsersPageMeta = {
+  page: number;
+  totalPages: number;
+  totalItems: number;
+};
+
+type UsersPageDto = {
+  data: UserDto[];
+  meta: UsersPageMeta;
+};
+
+type UsersQueryConfig = {
+  queryKey: [string, unknown];
+  queryFn: () => Promise<UsersPageDto>;
+  placeholderData: (previousPage: UsersPageDto | undefined) => UsersPageDto | undefined;
+};
+
 let latestPaginatedProps: PaginatedTableMockProps<UserDto> | undefined;
 
 const sampleRow: UserDto = {
@@ -84,14 +101,11 @@ describe('<UsersTable />', () => {
   });
 
   it('configure PaginatedTable with the correct columns and basic settings', () => {
-    /* Arrange */
     renderWithProviders(<UsersTable />);
 
-    /* Act */
     expect(latestPaginatedProps).toBeDefined();
     const props = latestPaginatedProps!;
 
-    /* Assert */
     expect(props.initialLimit).toBe(10);
     expect(props.getRowId(sampleRow)).toBe(sampleRow.email);
 
@@ -100,10 +114,8 @@ describe('<UsersTable />', () => {
   });
 
   it("renders the 'Add user' button when onAddUser is provided and triggers the handler on click", () => {
-    /* Arrange */
     const onAddUser = vi.fn();
 
-    /* Act */
     renderWithProviders(<UsersTable onAddUser={onAddUser} />);
 
     const addButton = screen.getByRole('button', { name: /add user/i });
@@ -111,17 +123,14 @@ describe('<UsersTable />', () => {
 
     fireEvent.click(addButton);
 
-    /* Assert */
     expect(onAddUser).toHaveBeenCalledTimes(1);
   });
 
   it('triggers the line handlers (approve/edit/delete) for a USER', () => {
-    /* Arrange */
     const onApproveDisapproveUser = vi.fn();
     const onEditUser = vi.fn();
     const onDeleteUser = vi.fn();
 
-    /* Act */
     renderWithProviders(
       <UsersTable
         onApproveDisapproveUser={onApproveDisapproveUser}
@@ -133,7 +142,6 @@ describe('<UsersTable />', () => {
     const actionsContainer = screen.getByTestId('actions-container');
     const buttons = within(actionsContainer).getAllByRole('button');
 
-    /* Assert */
     expect(buttons.length).toBe(3);
 
     fireEvent.click(buttons[0]);
@@ -151,7 +159,6 @@ describe('<UsersTable />', () => {
   });
 
   it('disables the actions (approve/delete) for an ADMIN, but not "edit"', () => {
-    /* Arrange */
     const onApproveDisapproveUser = vi.fn();
     const onEditUser = vi.fn();
     const onDeleteUser = vi.fn();
@@ -174,12 +181,10 @@ describe('<UsersTable />', () => {
       password: 'Admin!',
     };
 
-    /* Act */
     const { getAllByRole } = renderWithProviders(
       <>{latestPaginatedProps!.renderActions(adminRow)}</>,
     );
 
-    /* Assert */
     const buttons = getAllByRole('button');
 
     expect(buttons.length).toBeGreaterThanOrEqual(3);
@@ -192,14 +197,11 @@ describe('<UsersTable />', () => {
   });
 
   it('triggers the bulk enable/disable handlers with the selection', () => {
-    /* Arrange */
     const onBulkEnable = vi.fn();
     const onBulkDisable = vi.fn();
 
-    /* Act */
     renderWithProviders(<UsersTable onBulkEnable={onBulkEnable} onBulkDisable={onBulkDisable} />);
 
-    /* Assert */
     const bottomBar = screen.getByTestId('bottom-bar-container');
     const bulkButtons = within(bottomBar).getAllByRole('button');
 
@@ -216,7 +218,6 @@ describe('<UsersTable />', () => {
   });
 
   it('render of the "role" column displays the translated label', () => {
-    /* Arrange */
     renderWithProviders(<UsersTable />);
 
     expect(latestPaginatedProps).toBeDefined();
@@ -232,15 +233,12 @@ describe('<UsersTable />', () => {
       password: 'Admin!',
     };
 
-    /* Act */
     const { getByText } = renderWithProviders(<>{roleCol!.render!(adminRow)}</>);
 
-    /* Assert */
     expect(getByText(/admin/i)).toBeInTheDocument();
   });
 
   it('Rendering the "enabled" column displays Enabled / Disabled depending on the value', () => {
-    /* Arrange */
     renderWithProviders(<UsersTable />);
 
     expect(latestPaginatedProps).toBeDefined();
@@ -264,7 +262,6 @@ describe('<UsersTable />', () => {
       password: '',
     };
 
-    /* Act */
     const { getByText: getByTextEnabled } = renderWithProviders(
       <>{enabledCol!.render!(rowEnabled)}</>,
     );
@@ -272,13 +269,11 @@ describe('<UsersTable />', () => {
       <>{enabledCol!.render!(rowDisabled)}</>,
     );
 
-    /* Assert */
     expect(getByTextEnabled(/enabled/i)).toBeInTheDocument();
     expect(getByTextDisabled(/disabled/i)).toBeInTheDocument();
   });
 
   it('rendering the column "api_key" hides the key or displays "none"', () => {
-    /* Arrange */
     renderWithProviders(<UsersTable />);
 
     expect(latestPaginatedProps).toBeDefined();
@@ -302,7 +297,6 @@ describe('<UsersTable />', () => {
       password: '',
     };
 
-    /* Act */
     const { getByText: getByTextMasked } = renderWithProviders(
       <>{apiKeyCol!.render!(rowWithKey)}</>,
     );
@@ -310,17 +304,15 @@ describe('<UsersTable />', () => {
       <>{apiKeyCol!.render!(rowWithoutKey)}</>,
     );
 
-    /* Assert */
     expect(getByTextMasked('••••••••••••')).toBeInTheDocument();
     expect(getByTextNone(/none/i)).toBeInTheDocument();
   });
 
   it('configure useUsersPage to call useQuery with token and fetchUsersPage', async () => {
-    /* Arrange */
     getAccessTokenMock.mockReturnValue('token-123');
 
     const queryResult = {
-      data: undefined,
+      data: undefined as UsersPageDto | undefined,
       isLoading: false,
       isError: false,
       error: null,
@@ -328,17 +320,15 @@ describe('<UsersTable />', () => {
       isFetching: false,
     };
 
-    let capturedConfig: any;
+    let capturedConfig: UsersQueryConfig | undefined;
 
-    useQueryMock.mockImplementation((config: any) => {
+    useQueryMock.mockImplementation((config: UsersQueryConfig) => {
       capturedConfig = config;
       return queryResult;
     });
 
-    /* Act */
     renderWithProviders(<UsersTable />);
 
-    /* Assert */
     expect(latestPaginatedProps).toBeDefined();
 
     const params = {
@@ -352,32 +342,38 @@ describe('<UsersTable />', () => {
     expect(result).toBe(queryResult);
 
     expect(useQueryMock).toHaveBeenCalledTimes(1);
-    expect(capturedConfig.queryKey).toEqual(['users', params]);
+    expect(capturedConfig).toBeDefined();
+
+    const effectiveConfig = capturedConfig!;
+    expect(effectiveConfig.queryKey).toEqual(['users', params]);
 
     fetchUsersPageMock.mockResolvedValueOnce({
       data: [],
       meta: { page: 1, totalPages: 1, totalItems: 0 },
     });
 
-    await capturedConfig.queryFn();
+    await effectiveConfig.queryFn();
 
     expect(getAccessTokenMock).toHaveBeenCalled();
     expect(fetchUsersPageMock).toHaveBeenCalledWith(expect.any(String), 'token-123', params);
 
-    const previousPage = { data: ['something'], meta: { page: 1 } };
-    expect(capturedConfig.placeholderData(previousPage)).toBe(previousPage);
+    const previousPage: UsersPageDto = {
+      data: [sampleRow],
+      meta: { page: 1, totalPages: 1, totalItems: 1 },
+    };
+
+    expect(effectiveConfig.placeholderData(previousPage)).toBe(previousPage);
   });
 
   it('throws a "Missing access token" error when no token is present', () => {
-    /* Arrange */
     getAccessTokenMock.mockReturnValue(undefined);
 
-    let capturedConfig: any;
+    let capturedConfig: UsersQueryConfig | undefined;
 
-    useQueryMock.mockImplementation((config: any) => {
+    useQueryMock.mockImplementation((config: UsersQueryConfig) => {
       capturedConfig = config;
       return {
-        data: undefined,
+        data: undefined as UsersPageDto | undefined,
         isLoading: false,
         isError: false,
         error: null,
@@ -386,7 +382,6 @@ describe('<UsersTable />', () => {
       };
     });
 
-    /* Act */
     renderWithProviders(<UsersTable />);
 
     const params = {
@@ -398,8 +393,10 @@ describe('<UsersTable />', () => {
 
     latestPaginatedProps!.usePageQuery(params as unknown);
 
-    /* Assert */
-    expect(() => capturedConfig.queryFn()).toThrow('Missing access token');
+    expect(capturedConfig).toBeDefined();
+    const effectiveConfig = capturedConfig!;
+
+    expect(() => effectiveConfig.queryFn()).toThrow('Missing access token');
     expect(getAccessTokenMock).toHaveBeenCalled();
     expect(fetchUsersPageMock).not.toHaveBeenCalled();
   });

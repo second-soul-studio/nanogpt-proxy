@@ -8,10 +8,8 @@ import type { UserDto } from '../../../../dtos/userDto.ts';
 
 let latestModalProps: DynamicFormModalProps<UserDto> | undefined;
 
-// mock updateUserAsync (hook useUser)
 const updateUserAsyncMock = vi.fn<(payload: UserDto) => Promise<void>>().mockResolvedValue();
 
-// fixtures pour initialValues & fields (mock user-form-config)
 const initialValuesFixture: UserDto = {
   enabled: true,
   email: 'initial@example.com',
@@ -35,9 +33,6 @@ const fieldsFixture = [
   },
 ];
 
-// --- Mocks de modules --- //
-
-// ⚠️ chemin depuis __tests__ vers src/hooks/useUser
 vi.mock('../../../../hooks/useUser', () => ({
   __esModule: true,
   useUser: () => ({
@@ -46,16 +41,12 @@ vi.mock('../../../../hooks/useUser', () => ({
   }),
 }));
 
-// mock de user-form-config : contrôle sur initialValues / fields
-// ⚠️ IMPORTANT : adapte le chemin pour qu'il matche ton import réel dans user-edit-modal
-// (si ton composant importe './user-form-config', ce vi.mock doit viser '../user-form-config.ts')
 vi.mock('../user-form-config.ts', () => ({
   __esModule: true,
   buildInitialValues: () => initialValuesFixture,
   buildUserFields: () => fieldsFixture,
 }));
 
-// mock de DynamicFormModal pour capturer les props
 vi.mock('../dynamic-form-modal.tsx', () => ({
   __esModule: true,
   DynamicFormModal: (props: DynamicFormModalProps<UserDto>) => {
@@ -64,10 +55,6 @@ vi.mock('../dynamic-form-modal.tsx', () => ({
   },
 }));
 
-// ⚠️ SUT importé APRÈS les mocks
-
-// --- Tests --- //
-
 describe('<UserEditModal />', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -75,7 +62,7 @@ describe('<UserEditModal />', () => {
     latestModalProps = undefined;
   });
 
-  it('passe les bonnes props à DynamicFormModal quand user est défini', () => {
+  it('pass the correct props to DynamicFormModal when user is defined', () => {
     /* Arrange */
     const onClose = vi.fn();
 
@@ -92,21 +79,16 @@ describe('<UserEditModal />', () => {
     /* Assert */
     expect(latestModalProps).toBeDefined();
 
-    // opened / key
     expect(latestModalProps!.opened).toBe(true);
 
-    // le titre doit contenir l'email (on évite de coupler à la traduction exacte)
     expect(String(latestModalProps!.title)).toContain(user.email);
 
-    // initialValues & fields viennent bien du builder mocké
     expect(latestModalProps!.initialValues).toEqual(initialValuesFixture);
     expect(latestModalProps!.fields).toEqual(fieldsFixture);
-
-    // loading => isPending
     expect(latestModalProps!.loading).toBe(false);
   });
 
-  it('appelle onClose quand onCancel est déclenché', () => {
+  it('call onClose when onCancel is triggered', () => {
     /* Arrange */
     const onClose = vi.fn();
 
@@ -130,7 +112,7 @@ describe('<UserEditModal />', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('mappe onSubmit vers updateUserAsync et ferme le modal (api_key & password vides => undefined)', async () => {
+  it('maps onSubmit to updateUserAsync and closes the modal (empty api_key & password => undefined)', async () => {
     /* Arrange */
     const onClose = vi.fn();
 
@@ -149,9 +131,9 @@ describe('<UserEditModal />', () => {
 
     const formValues: UserDto = {
       enabled: true,
-      email: 'ignored@from-values.com', // l’implémentation utilise user.email, pas values.email
-      password: '', // doit devenir undefined
-      api_key: '', // doit devenir undefined
+      email: 'ignored@from-values.com',
+      password: '',
+      api_key: '',
       role: 'ADMIN',
     };
 
@@ -161,7 +143,7 @@ describe('<UserEditModal />', () => {
     /* Assert */
     expect(updateUserAsyncMock).toHaveBeenCalledTimes(1);
     expect(updateUserAsyncMock).toHaveBeenCalledWith({
-      email: 'john.doe@example.com', // vient du user, pas du form values
+      email: 'john.doe@example.com',
       enabled: true,
       role: 'ADMIN',
       api_key: undefined,
@@ -171,7 +153,7 @@ describe('<UserEditModal />', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('conserve api_key et password quand non vides', async () => {
+  it('keep api_key and password when not empty', async () => {
     /* Arrange */
     const onClose = vi.fn();
 
@@ -212,7 +194,7 @@ describe('<UserEditModal />', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("ne fait rien si onSubmit est appelé sans user (branche de garde 'if (!user)')", async () => {
+  it("does nothing if onSubmit is called without a user (guard branch 'if (!user)')", async () => {
     /* Arrange */
     const onClose = vi.fn();
 

@@ -169,7 +169,7 @@ describe('<DynamicFormModal />', () => {
       expect(onSubmit).toHaveBeenCalledTimes(1);
     });
 
-    const submittedValues = (onSubmit as any).mock.calls[0][0] as TestFormValues;
+    const submittedValues = onSubmit.mock.calls[0][0] as TestFormValues;
     expect(submittedValues.email).toBe('john.doe@example.com');
     expect(submittedValues.password).toBe('Secret123!');
     expect(submittedValues.enabled).toBe(true);

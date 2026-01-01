@@ -33,6 +33,15 @@ const columns: ColumnDef<Row>[] = [
   },
 ];
 
+type UsePageQueryResult = ReturnType<PaginatedTableProps<Row>['usePageQuery']>;
+
+type PaginationLike = {
+  page: number;
+  limit?: number;
+  sortBy?: string;
+  sortDir?: 'ASC' | 'DESC' | undefined;
+};
+
 describe('<PaginatedTable />', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -49,7 +58,7 @@ describe('<PaginatedTable />', () => {
         error: null,
         refetch: vi.fn(),
         isFetching: false,
-      }) as any;
+      }) as unknown as UsePageQueryResult;
 
     renderWithProviders(
       <PaginatedTable<Row>
@@ -76,7 +85,7 @@ describe('<PaginatedTable />', () => {
         error: new Error('Boom'),
         refetch: refetchMock,
         isFetching: false,
-      }) as any;
+      }) as unknown as UsePageQueryResult;
 
     renderWithProviders(
       <PaginatedTable<Row>
@@ -95,7 +104,7 @@ describe('<PaginatedTable />', () => {
     expect(refetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('displays an error message and calls refetch when clicking "Retry"', () => {
+  it('displays "No data to display" and "No item selected" when there are no rows', () => {
     /* Arrange */
     const usePageQueryEmpty: PaginatedTableProps<Row>['usePageQuery'] = () =>
       ({
@@ -108,7 +117,7 @@ describe('<PaginatedTable />', () => {
         error: null,
         refetch: vi.fn(),
         isFetching: false,
-      }) as any;
+      }) as unknown as UsePageQueryResult;
 
     renderWithProviders(
       <PaginatedTable<Row>
@@ -132,14 +141,18 @@ describe('<PaginatedTable />', () => {
       ({
         data: {
           data: sampleRows,
-          meta: { page: params.page, totalPages: 1, totalItems: sampleRows.length },
+          meta: {
+            page: (params as PaginationLike).page,
+            totalPages: 1,
+            totalItems: sampleRows.length,
+          },
         },
         isLoading: false,
         isError: false,
         error: null,
         refetch: vi.fn(),
         isFetching: true, // pour couvrir le loader "refreshingData"
-      }) as any;
+      }) as unknown as UsePageQueryResult;
 
     renderWithProviders(
       <PaginatedTable<Row>
@@ -155,19 +168,24 @@ describe('<PaginatedTable />', () => {
       />,
     );
 
+    // texte de sélection initial
     expect(screen.getByText(/no item selected/i)).toBeInTheDocument();
 
+    // loader de rafraîchissement
     expect(screen.getByLabelText(/refreshing/i)).toBeInTheDocument();
 
+    // select all
     const selectAllCheckbox = screen.getByLabelText('Select all rows on this page');
     fireEvent.click(selectAllCheckbox);
 
+    // maintenant, "items selected" (matcher plus souple)
     const selectionText = screen.getByText(
       (content) =>
         content.toLowerCase().includes('item') && content.toLowerCase().includes('selected'),
     );
     expect(selectionText).toBeInTheDocument();
 
+    // bottom bar doit être visible avec notre bouton
     const bulkButton = screen.getByRole('button', { name: /bulk action/i });
     fireEvent.click(bulkButton);
 
@@ -182,14 +200,18 @@ describe('<PaginatedTable />', () => {
       ({
         data: {
           data: sampleRows,
-          meta: { page: params.page, totalPages: 1, totalItems: sampleRows.length },
+          meta: {
+            page: (params as PaginationLike).page,
+            totalPages: 1,
+            totalItems: sampleRows.length,
+          },
         },
         isLoading: false,
         isError: false,
         error: null,
         refetch: vi.fn(),
         isFetching: false,
-      }) as any;
+      }) as unknown as UsePageQueryResult;
 
     renderWithProviders(
       <PaginatedTable<Row>
@@ -213,7 +235,7 @@ describe('<PaginatedTable />', () => {
     expect(selectedOneText).toBeInTheDocument();
   });
 
-  it('calls renderActions and passes the correct line', () => {
+  it('calls renderActions and passes the correct row', () => {
     /* Arrange */
     const actionSpy = vi.fn();
 
@@ -221,14 +243,18 @@ describe('<PaginatedTable />', () => {
       ({
         data: {
           data: sampleRows,
-          meta: { page: params.page, totalPages: 1, totalItems: sampleRows.length },
+          meta: {
+            page: (params as PaginationLike).page,
+            totalPages: 1,
+            totalItems: sampleRows.length,
+          },
         },
         isLoading: false,
         isError: false,
         error: null,
         refetch: vi.fn(),
         isFetching: false,
-      }) as any;
+      }) as unknown as UsePageQueryResult;
 
     renderWithProviders(
       <PaginatedTable<Row>
@@ -253,21 +279,26 @@ describe('<PaginatedTable />', () => {
 
   it('manages sorting on a sortable column and passes the correct params to usePageQuery', async () => {
     /* Arrange */
-    let lastQueryParams: any;
+    let lastQueryParams: PaginationLike | undefined;
 
     const usePageQuerySorted: PaginatedTableProps<Row>['usePageQuery'] = (params) => {
-      lastQueryParams = params;
+      lastQueryParams = params as PaginationLike;
+
       return {
         data: {
           data: sampleRows,
-          meta: { page: params.page, totalPages: 1, totalItems: sampleRows.length },
+          meta: {
+            page: (params as PaginationLike).page,
+            totalPages: 1,
+            totalItems: sampleRows.length,
+          },
         },
         isLoading: false,
         isError: false,
         error: null,
         refetch: vi.fn(),
         isFetching: false,
-      } as any;
+      } as unknown as UsePageQueryResult;
     };
 
     renderWithProviders(
@@ -279,23 +310,26 @@ describe('<PaginatedTable />', () => {
       />,
     );
 
-    expect(lastQueryParams.sortBy).toBeUndefined();
-    expect(lastQueryParams.sortDir).toBeUndefined();
+    expect(lastQueryParams).toBeDefined();
+    expect(lastQueryParams!.sortBy).toBeUndefined();
+    expect(lastQueryParams!.sortDir).toBeUndefined();
 
     const nameHeaderButton = screen.getByRole('button', { name: /name/i });
 
+    // 1er clic -> ASC
     fireEvent.click(nameHeaderButton);
 
     await waitFor(() => {
-      expect(lastQueryParams.sortBy).toBe('name');
-      expect(lastQueryParams.sortDir).toBe('ASC');
+      expect(lastQueryParams!.sortBy).toBe('name');
+      expect(lastQueryParams!.sortDir).toBe('ASC');
     });
 
+    // 2e clic -> DESC
     fireEvent.click(nameHeaderButton);
 
     await waitFor(() => {
-      expect(lastQueryParams.sortBy).toBe('name');
-      expect(lastQueryParams.sortDir).toBe('DESC');
+      expect(lastQueryParams!.sortBy).toBe('name');
+      expect(lastQueryParams!.sortDir).toBe('DESC');
     });
   });
 
@@ -305,14 +339,18 @@ describe('<PaginatedTable />', () => {
       ({
         data: {
           data: sampleRows,
-          meta: { page: params.page, totalPages: 3, totalItems: sampleRows.length * 3 },
+          meta: {
+            page: (params as PaginationLike).page,
+            totalPages: 3,
+            totalItems: sampleRows.length * 3,
+          },
         },
         isLoading: false,
         isError: false,
         error: null,
         refetch: vi.fn(),
         isFetching: false,
-      }) as any;
+      }) as unknown as UsePageQueryResult;
 
     renderWithProviders(
       <PaginatedTable<Row>

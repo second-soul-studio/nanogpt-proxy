@@ -3,6 +3,9 @@
     "back": {
       "label": "Back"
     },
+    "cancel": {
+      "label": "Cancel"
+    },
     "createAccount": {
       "label": "Create account"
     },
@@ -11,6 +14,9 @@
     },
     "next": {
       "label": "Next"
+    },
+    "save": {
+      "label": "Save"
     }
   },
   "input": {
@@ -119,6 +125,75 @@
     },
     "errors": {
       "load": "Unable to load configuration."
+    }
+  },
+  "modals": {
+    "createUpdateUser": {
+      "apiKey": {
+        "label": "API Key",
+        "placeholder": "Optional UUID v4"
+      },
+      "email": {
+        "label": "Email",
+        "requiredError": "Email is required"
+      },
+      "enabled": {
+        "label": "Enabled"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Set an initial password",
+        "placeholderEdit": "Leave empty to keep current password"
+      },
+      "role": {
+        "label": "Role"
+      },
+      "title": {
+        "create": {
+          "label": "Create user"
+        },
+        "edit": {
+          "label": "Edit user: {{email}}"
+        }
+      }
+    }
+  },
+  "tables": {
+    "administer": {
+      "buttons": {
+        "enableSelected": "Enable selected",
+        "disableSelected": "Disable selected",
+        "addUser": "Add user",
+        "editUser": "Edit user",
+        "enableUser": "Enable user",
+        "disableUser" : "Disable user",
+        "deleteUser": "Delete user"
+      },
+      "columns": {
+        "email": "Email",
+        "role": "Role",
+        "enabled": "Enabled",
+        "apiKey": "API Key",
+        "actions": "Actions"
+      },
+      "labels": {
+        "admin": "ADMIN",
+        "user": "USER",
+        "disabled": "DISABLED",
+        "enabled": "ENABLED",
+        "none": "None"
+      }
+    },
+    "common": {
+      "labels": {
+        "page": "Page",
+        "itemsSelected": "item(s) selected",
+        "itemsTotal": "item(s) total",
+        "loading": "Loading...",
+        "noDataToDisplay": "No data to display.",
+        "noItemSelected": "No item selected",
+        "refreshingData": "Refreshing data"
+      }
     }
   }
 }

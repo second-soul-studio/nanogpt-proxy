@@ -1,0 +1,7 @@
+### GET models
+GET https://nano-gpt.com/api/subscription/v1/usage
+Authorization: Bearer {{apikey}}
+Content-Type: application/json
+x-openwebui-user-email: {{email}}
+
+###

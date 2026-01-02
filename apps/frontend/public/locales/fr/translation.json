@@ -3,6 +3,9 @@
     "back": {
       "label": "Retour"
     },
+    "cancel": {
+      "label": "Annuler"
+    },
     "createAccount": {
       "label": "Créer un compte"
     },
@@ -11,6 +14,9 @@
     },
     "next": {
       "label": "Suivant"
+    },
+    "save": {
+      "label": "Enregistrer"
     }
   },
   "input": {
@@ -119,6 +125,75 @@
     },
     "errors": {
       "load": "Impossible de charger la configuration."
+    }
+  },
+  "modals": {
+    "createUpdateUser": {
+      "apiKey": {
+        "label": "Clé API",
+        "placeholder": "UUID v4 optionnel"
+      },
+      "email": {
+        "label": "Courriel",
+        "requiredError": "L’adresse courriel est obligatoire"
+      },
+      "enabled": {
+        "label": "Activé"
+      },
+      "password": {
+        "label": "Mot de passe",
+        "placeholder": "Définir un mot de passe initial",
+        "placeholderEdit": "Laisser vide pour conserver le mot de passe actuel"
+      },
+      "role": {
+        "label": "Rôle"
+      },
+      "title": {
+        "create": {
+          "label": "Créer un utilisateur"
+        },
+        "edit": {
+          "label": "Modifier l’utilisateur : {{email}}"
+        }
+      }
+    }
+  },
+  "tables": {
+    "administer": {
+      "buttons": {
+        "enableSelected": "Activer les éléments sélectionnés",
+        "disableSelected": "Désactiver les éléments sélectionnés",
+        "addUser": "Ajout utilisateur",
+        "editUser": "Modifier utilisateur",
+        "enableUser": "Activer utilisateur",
+        "disableUser": "Désactiver utilisateur",
+        "deleteUser": "Supprimer utilisateur"
+      },
+      "columns": {
+        "email": "Courriel",
+        "role": "Rôle",
+        "enabled": "Activé",
+        "apiKey": "Clé API",
+        "actions": "Actions"
+      },
+      "labels": {
+        "admin": "ADMIN",
+        "user": "UTILISATEUR",
+        "disabled": "DÉSACTIVÉ",
+        "enabled": "ACTIVÉ",
+        "none": "Aucune"
+      }
+    },
+    "common": {
+      "labels": {
+        "page": "Page",
+        "itemsSelected": "élément(s) sélectionné(s)",
+        "itemsTotal": "élément(s) au total",
+        "loading": "Chargement...",
+        "noDataToDisplay": "Aucune donnée à afficher.",
+        "noItemSelected": "Aucun élément sélectionné",
+        "refreshingData": "Actualisation des données"
+      }
     }
   }
 }

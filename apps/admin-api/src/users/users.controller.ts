@@ -38,6 +38,13 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'USER')
+  @Put('bulk')
+  async updateUsers(@Body() dtos: UpdateUserDto[]): Promise<void> {
+    await Promise.all(dtos.map((dto) => this.users.updateUser(dto)));
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'USER')
   @Put('/apikey')
   async upsertKey(@Body() dto: UpdateUserDto): Promise<void> {
     return await this.users.upsertKey(dto);

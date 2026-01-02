@@ -3,6 +3,9 @@
     "back": {
       "label": "Zurück"
     },
+    "cancel": {
+      "label": "Abbrechen"
+    },
     "createAccount": {
       "label": "Konto erstellen"
     },
@@ -11,6 +14,9 @@
     },
     "next": {
       "label": "Weiter"
+    },
+    "save": {
+      "label": "Speichern"
     }
   },
   "input": {
@@ -121,6 +127,75 @@
     },
     "errors": {
       "load": "Konfiguration konnte nicht geladen werden."
+    }
+  },
+  "modals": {
+    "createUpdateUser": {
+      "apiKey": {
+        "label": "API-Schlüssel",
+        "placeholder": "Optionale UUID v4"
+      },
+      "email": {
+        "label": "E-Mail",
+        "requiredError": "E-Mail ist erforderlich"
+      },
+      "enabled": {
+        "label": "Aktiv"
+      },
+      "password": {
+        "label": "Passwort",
+        "placeholder": "Anfangspasswort festlegen",
+        "placeholderEdit": "Leer lassen, um das aktuelle Passwort zu behalten"
+      },
+      "role": {
+        "label": "Rolle"
+      },
+      "title": {
+        "create": {
+          "label": "Benutzer erstellen"
+        },
+        "edit": {
+          "label": "Benutzer bearbeiten: {{email}}"
+        }
+      }
+    }
+  },
+  "tables": {
+    "administer": {
+      "buttons": {
+        "enableSelected": "Ausgewählte aktivieren",
+        "disableSelected": "Ausgewählte deaktivieren",
+        "addUser": "Benutzer hinzufügen",
+        "editUser": "Benutzer bearbeiten",
+        "enableUser": "Benutzer aktivieren",
+        "disableUser": "Benutzer deaktivieren",
+        "deleteUser": "Benutzer löschen"
+      },
+      "columns": {
+        "email": "E-Mail",
+        "role": "Rolle",
+        "enabled": "Aktiv",
+        "apiKey": "API-Schlüssel",
+        "actions": "Aktionen"
+      },
+      "labels": {
+        "admin": "ADMIN",
+        "user": "BENUTZER",
+        "disabled": "DEAKTIVIERT",
+        "enabled": "AKTIVIERT",
+        "none": "Keine"
+      }
+    },
+    "common": {
+      "labels": {
+        "page": "Seite",
+        "itemsSelected": "ausgewählte(s) Element(e)",
+        "itemsTotal": "Element(e) insgesamt",
+        "loading": "Wird geladen...",
+        "noDataToDisplay": "Keine Daten zum Anzeigen.",
+        "noItemSelected": "Kein Element ausgewählt",
+        "refreshingData": "Daten werden aktualisiert"
+      }
     }
   }
 }

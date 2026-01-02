@@ -104,79 +104,83 @@ function UsersTable(props: UsersTableProps) {
         columns={columns}
         initialLimit={10}
         usePageQuery={useUsersPage}
-        renderActions={(row) => (
-          <Group>
-            {onEnableDisableUser && (
-              <UnstyledButton
-                data-cy={`enable-disable-btn-${row.email}`}
-                data-testid={`enable-disable-btn-${row.email}`}
-                size="xs"
-                onClick={() => onEnableDisableUser(row)}
-                disabled={row.role === 'ADMIN'}
-                style={{
-                  cursor: row.role === 'ADMIN' ? 'not-allowed' : 'pointer',
-                  opacity: row.role === 'ADMIN' ? 0.5 : 1,
-                }}
-              >
-                <Tooltip
-                  arrowOffset={50}
-                  arrowSize={8}
-                  label={
-                    row.enabled
-                      ? t('tables.administer.buttons.disableUser')
-                      : t('tables.administer.buttons.enableUser')
-                  }
-                  withArrow
-                  position="bottom"
-                >
-                  {row.enabled ? <IconUserX /> : <IconUserCheck />}
-                </Tooltip>
-              </UnstyledButton>
-            )}
-            {onEditUser && (
-              <UnstyledButton
-                data-cy={`edit-user-btn-${row.email}`}
-                data-testid={`edit-user-btn-${row}`}
-                size="xs"
-                onClick={() => onEditUser(row)}
-              >
-                <Tooltip
-                  arrowOffset={50}
-                  arrowSize={8}
-                  label={t('tables.administer.buttons.editUser')}
-                  withArrow
-                  position="bottom"
-                >
-                  <IconEdit />
-                </Tooltip>
-              </UnstyledButton>
-            )}
+        renderActions={(row) => {
+          const safeId = row.email.replace(/[^a-z0-9]/gi, '-');
 
-            {onDeleteUser && (
-              <UnstyledButton
-                data-cy={`delete-user-btn-${row}`}
-                data-testid={`delete-user-btn-${row}`}
-                size="xs"
-                onClick={() => onDeleteUser(row)}
-                disabled={row.role === 'ADMIN'}
-                style={{
-                  cursor: row.role === 'ADMIN' ? 'not-allowed' : 'pointer',
-                  opacity: row.role === 'ADMIN' ? 0.5 : 1,
-                }}
-              >
-                <Tooltip
-                  arrowOffset={50}
-                  arrowSize={8}
-                  label={t('tables.administer.buttons.deleteUser')}
-                  withArrow
-                  position="bottom"
+          return (
+            <Group>
+              {onEnableDisableUser && (
+                <UnstyledButton
+                  data-cy={`enable-disable-btn-${safeId}`}
+                  data-testid={`enable-disable-btn-${safeId}`}
+                  size="xs"
+                  onClick={() => onEnableDisableUser(row)}
+                  disabled={row.role === 'ADMIN'}
+                  style={{
+                    cursor: row.role === 'ADMIN' ? 'not-allowed' : 'pointer',
+                    opacity: row.role === 'ADMIN' ? 0.5 : 1,
+                  }}
                 >
-                  <IconTrash />
-                </Tooltip>
-              </UnstyledButton>
-            )}
-          </Group>
-        )}
+                  <Tooltip
+                    arrowOffset={50}
+                    arrowSize={8}
+                    label={
+                      row.enabled
+                        ? t('tables.administer.buttons.disableUser')
+                        : t('tables.administer.buttons.enableUser')
+                    }
+                    withArrow
+                    position="bottom"
+                  >
+                    {row.enabled ? <IconUserX /> : <IconUserCheck />}
+                  </Tooltip>
+                </UnstyledButton>
+              )}
+              {onEditUser && (
+                <UnstyledButton
+                  data-cy={`edit-user-btn-${safeId}`}
+                  data-testid={`edit-user-btn-${safeId}`}
+                  size="xs"
+                  onClick={() => onEditUser(row)}
+                >
+                  <Tooltip
+                    arrowOffset={50}
+                    arrowSize={8}
+                    label={t('tables.administer.buttons.editUser')}
+                    withArrow
+                    position="bottom"
+                  >
+                    <IconEdit />
+                  </Tooltip>
+                </UnstyledButton>
+              )}
+
+              {onDeleteUser && (
+                <UnstyledButton
+                  data-cy={`delete-user-btn-${safeId}`}
+                  data-testid={`delete-user-btn-${safeId}`}
+                  size="xs"
+                  onClick={() => onDeleteUser(row)}
+                  disabled={row.role === 'ADMIN'}
+                  style={{
+                    cursor: row.role === 'ADMIN' ? 'not-allowed' : 'pointer',
+                    opacity: row.role === 'ADMIN' ? 0.5 : 1,
+                  }}
+                >
+                  <Tooltip
+                    arrowOffset={50}
+                    arrowSize={8}
+                    label={t('tables.administer.buttons.deleteUser')}
+                    withArrow
+                    position="bottom"
+                  >
+                    <IconTrash />
+                  </Tooltip>
+                </UnstyledButton>
+              )}
+            </Group>
+          );
+        }}
         renderBottomBar={(selected) => (
           <>
             {onBulkEnable && (

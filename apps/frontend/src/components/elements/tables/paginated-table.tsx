@@ -53,9 +53,13 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
       return base;
     }
 
+    type IndexedRow = Record<string, unknown>;
+
+    const getValue = (row: T, key: string): unknown => (row as IndexedRow)[key];
+
     return [...base].sort((a, b) => {
-      const va = (a as any)[sortBy];
-      const vb = (b as any)[sortBy];
+      const va = getValue(a, sortBy);
+      const vb = getValue(b, sortBy);
 
       if (va == null && vb == null) {
         return 0;
@@ -67,13 +71,25 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
         return 1;
       }
 
-      if (va < vb) {
-        return sortDir === 'ASC' ? -1 : 1;
+      if (typeof va === 'string' && typeof vb === 'string') {
+        const cmp = va.localeCompare(vb);
+        return sortDir === 'ASC' ? cmp : -cmp;
       }
-      if (va > vb) {
-        return sortDir === 'ASC' ? 1 : -1;
+
+      if (typeof va === 'number' && typeof vb === 'number') {
+        if (va < vb) {
+          return sortDir === 'ASC' ? -1 : 1;
+        }
+        if (va > vb) {
+          return sortDir === 'ASC' ? 1 : -1;
+        }
+        return 0;
       }
-      return 0;
+
+      const sa = String(va);
+      const sb = String(vb);
+      const cmp = sa.localeCompare(sb);
+      return sortDir === 'ASC' ? cmp : -cmp;
     });
   }, [rawRows, sortBy, sortDir]);
 
@@ -150,7 +166,6 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
 
     setSortBy(nextSortBy);
     setSortDir(nextSortDir);
-    setPage(1);
   };
 
   const renderSortIcon = (column: ColumnDef<T>) => {

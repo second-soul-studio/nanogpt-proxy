@@ -1,18 +1,18 @@
-import React, { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import {
-  Box,
-  Table,
-  Checkbox,
-  Group,
-  Text,
-  Pagination,
-  Loader,
-  ScrollArea,
   ActionIcon,
+  Box,
+  Checkbox,
   Flex,
+  Group,
+  Loader,
+  Pagination,
   rem,
+  ScrollArea,
+  Table,
+  Text,
 } from '@mantine/core';
-import { IconArrowDown, IconArrowUp, IconArrowsSort } from '@tabler/icons-react';
+import { IconArrowDown, IconArrowsSort, IconArrowUp } from '@tabler/icons-react';
 import type { PaginationParams, SortDir } from './pagination-types';
 import type { ColumnDef } from './column-def';
 import type { PaginatedTableProps } from './paginated-table-props';
@@ -44,10 +44,42 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
 
   const { data, isLoading, isError, error, refetch, isFetching } = usePageQuery(queryParams);
 
-  const rows: T[] = (data?.data ?? []) as T[];
+  const rawRows = data?.data;
+
+  const rows = useMemo<T[]>(() => {
+    const base = rawRows ?? [];
+
+    if (!sortBy || !sortDir) {
+      return base;
+    }
+
+    return [...base].sort((a, b) => {
+      const va = (a as any)[sortBy];
+      const vb = (b as any)[sortBy];
+
+      if (va == null && vb == null) {
+        return 0;
+      }
+      if (va == null) {
+        return -1;
+      }
+      if (vb == null) {
+        return 1;
+      }
+
+      if (va < vb) {
+        return sortDir === 'ASC' ? -1 : 1;
+      }
+      if (va > vb) {
+        return sortDir === 'ASC' ? 1 : -1;
+      }
+      return 0;
+    });
+  }, [rawRows, sortBy, sortDir]);
+
   const meta = data?.meta;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSelectedIds(new Set());
   }, [page, limit, sortBy, sortDir]);
 
@@ -96,16 +128,28 @@ export function PaginatedTable<T>(props: PaginatedTableProps<T>) {
     if (!column.sortable) {
       return;
     }
-    const key = column.key as string;
+
+    const key = String(column.key);
+
+    let nextSortBy: string | undefined = sortBy;
+    let nextSortDir: SortDir | undefined;
+
     if (sortBy !== key) {
-      setSortBy(key);
-      setSortDir('ASC');
+      nextSortBy = key;
+      nextSortDir = 'ASC';
     } else {
-      setSortDir((prev) => (prev === 'ASC' ? 'DESC' : prev === 'DESC' ? undefined : 'ASC'));
-      if (sortDir === undefined) {
-        setSortBy(undefined);
+      if (sortDir === 'ASC') {
+        nextSortDir = 'DESC';
+      } else if (sortDir === 'DESC') {
+        nextSortBy = undefined;
+        nextSortDir = undefined;
+      } else {
+        nextSortDir = 'ASC';
       }
     }
+
+    setSortBy(nextSortBy);
+    setSortDir(nextSortDir);
     setPage(1);
   };
 

@@ -105,7 +105,7 @@ describe('<AdministerForm />', () => {
 
     const usersTableProps = UsersTableMock.mock.calls[0]?.[0] as UsersTableProps | undefined;
     expect(usersTableProps).toBeDefined();
-    expect(typeof usersTableProps!.onApproveDisapproveUser).toBe('function');
+    expect(typeof usersTableProps!.onEnableDisableUser).toBe('function');
 
     const user: UserDto = {
       email: 'test@example.com',
@@ -116,7 +116,7 @@ describe('<AdministerForm />', () => {
     };
 
     /* Act */
-    usersTableProps!.onApproveDisapproveUser?.(user);
+    usersTableProps!.onEnableDisableUser?.(user);
 
     /* Assert */
     expect(toggleEnabledMock).toHaveBeenCalledTimes(1);

@@ -108,8 +108,8 @@ function UsersTable(props: UsersTableProps) {
           <Group>
             {onEnableDisableUser && (
               <UnstyledButton
-                data-cy={`enable-disable-btn-${row}`}
-                data-testid={`enable-disable-btn-${row}`}
+                data-cy={`enable-disable-btn-${row.email}`}
+                data-testid={`enable-disable-btn-${row.email}`}
                 size="xs"
                 onClick={() => onEnableDisableUser(row)}
                 disabled={row.role === 'ADMIN'}
@@ -135,7 +135,7 @@ function UsersTable(props: UsersTableProps) {
             )}
             {onEditUser && (
               <UnstyledButton
-                data-cy={`edit-user-btn-${row}`}
+                data-cy={`edit-user-btn-${row.email}`}
                 data-testid={`edit-user-btn-${row}`}
                 size="xs"
                 onClick={() => onEditUser(row)}

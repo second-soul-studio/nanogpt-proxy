@@ -25,16 +25,13 @@ function AdministerForm() {
       <UsersTable
         onAddUser={createUserHandlers.open}
         onEnableDisableUser={(user) => {
-          console.info('Approve/DisapproveUser ' + user);
           toggleEnabled(user);
         }}
         onEditUser={(user) => {
-          console.info('Edit', user);
           setEditingUser(user);
           openEditUser();
         }}
         onDeleteUser={(user) => {
-          console.info('Delete ' + user);
           deleteUser({ email: user.email });
         }}
         onBulkEnable={(users) => {
